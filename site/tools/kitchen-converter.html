@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Unit Converter & Recipe Scaler | Free Cooking Calculator</title>
+  <meta name="description" content="Convert between cups, ounces, grams, tablespoons, and more. Scale recipes up or down for any number of servings. Free kitchen conversion tool.">
+  <meta name="keywords" content="kitchen converter, cooking unit converter, recipe scaler, cups to mL, ounces to grams, tablespoons to cups, cooking measurement conversion">
+  <link rel="canonical" href="https://restaurantcalc.com/tools/kitchen-converter.html">
+  <meta property="og:title" content="Kitchen Unit Converter & Recipe Scaler | Free Cooking Calculator">
+  <meta property="og:description" content="Convert between cups, ounces, grams, tablespoons, and more. Scale recipes up or down for any number of servings. Free kitchen conversion tool.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://restaurantcalc.com/tools/kitchen-converter.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Kitchen Unit Converter & Recipe Scaler",
+    "url": "https://restaurantcalc.com/tools/kitchen-converter.html",
+    "description": "Convert between cups, ounces, grams, tablespoons, and more. Scale recipes up or down for any number of servings. Free kitchen conversion tool.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "RestaurantCalc",
+      "url": "https://restaurantcalc.com/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">&#127860;</span>
+        RestaurantCalc
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+      <nav>
+        <a href="../">Home</a>
+        <a href="recipe-cost.html">Recipe Cost</a>
+        <a href="menu-pricing.html">Menu Pricing</a>
+        <a href="tip-calculator.html">Tips</a>
+        <a href="kitchen-converter.html" class="active">Converter</a>
+        <a href="break-even.html">Break-Even</a>
+        <a href="par-level.html">Par Level</a>
+        <a href="catering-quote.html">Catering</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Kitchen Unit <span>Converter</span></h1>
+      <p>Convert between cups, tablespoons, ounces, grams, milliliters, and more. Scale any recipe up or down for the number of servings you need.</p>
+    </section>
+
+    <!-- ============ UNIT CONVERTER ============ -->
+    <section class="tool-section" id="unit-converter">
+      <h2>Unit Converter</h2>
+      <div class="converter-controls">
+        <div class="converter-row">
+          <div class="form-group">
+            <label for="conv-value">Value</label>
+            <input type="number" id="conv-value" value="1" min="0" step="any" oninput="convert()">
+          </div>
+          <div class="form-group">
+            <label for="conv-category">Category</label>
+            <select id="conv-category" onchange="populateUnits(); convert();">
+              <option value="volume">Volume</option>
+              <option value="weight">Weight</option>
+              <option value="temperature">Temperature</option>
+            </select>
+          </div>
+        </div>
+        <div class="converter-row">
+          <div class="form-group">
+            <label for="conv-from">From</label>
+            <select id="conv-from" onchange="convert()"></select>
+          </div>
+          <div class="swap-btn-wrap">
+            <button type="button" class="btn btn-small" onclick="swapUnits()" title="Swap units">&#8646;</button>
+          </div>
+          <div class="form-group">
+            <label for="conv-to">To</label>
+            <select id="conv-to" onchange="convert()"></select>
+          </div>
+        </div>
+        <div class="result-display" id="conv-result">
+          <span class="result-value">1</span>
+          <span class="result-label">cups = 236.588 mL</span>
+        </div>
+      </div>
+
+      <div class="quick-converts">
+        <h3>Quick Conversions</h3>
+        <div class="quick-btn-grid">
+          <button class="btn btn-outline" onclick="quickConvert('volume','cups','mL',1)">1 cup &rarr; mL</button>
+          <button class="btn btn-outline" onclick="quickConvert('weight','oz','g',1)">1 oz &rarr; g</button>
+          <button class="btn btn-outline" onclick="quickConvert('temperature','F','C',350)">350&deg;F &rarr; &deg;C</button>
+          <button class="btn btn-outline" onclick="quickConvert('volume','tbsp','tsp',1)">1 tbsp &rarr; tsp</button>
+          <button class="btn btn-outline" onclick="quickConvert('weight','lb','g',1)">1 lb &rarr; g</button>
+          <button class="btn btn-outline" onclick="quickConvert('volume','cups','fl oz',1)">1 cup &rarr; fl oz</button>
+          <button class="btn btn-outline" onclick="quickConvert('volume','L','cups',1)">1 L &rarr; cups</button>
+          <button class="btn btn-outline" onclick="quickConvert('temperature','F','C',400)">400&deg;F &rarr; &deg;C</button>
+          <button class="btn btn-outline" onclick="quickConvert('weight','kg','lb',1)">1 kg &rarr; lb</button>
+          <button class="btn btn-outline" onclick="quickConvert('volume','gallons','L',1)">1 gal &rarr; L</button>
+          <button class="btn btn-outline" onclick="quickConvert('volume','cups','tbsp',0.25)">&frac14; cup &rarr; tbsp</button>
+          <button class="btn btn-outline" onclick="quickConvert('temperature','C','F',180)">180&deg;C &rarr; &deg;F</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RECIPE SCALER ============ -->
+    <section class="tool-section" id="recipe-scaler">
+      <h2>Recipe Scaler</h2>
+      <div class="scaler-controls">
+        <div class="converter-row">
+          <div class="form-group">
+            <label for="orig-servings">Original Servings</label>
+            <input type="number" id="orig-servings" value="4" min="1" step="1" oninput="scaleRecipe()">
+          </div>
+          <div class="form-group">
+            <label for="desired-servings">Desired Servings</label>
+            <input type="number" id="desired-servings" value="8" min="1" step="1" oninput="scaleRecipe()">
+          </div>
+          <div class="form-group">
+            <label>Scale Factor</label>
+            <div class="scale-factor-display" id="scale-factor">2.00x</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table" id="ingredient-table">
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th>Original Qty</th>
+            <th>Unit</th>
+            <th>Scaled Qty</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ingredient-tbody">
+        </tbody>
+      </table>
+      <button class="btn btn-primary mt-1" onclick="addIngredient()">+ Add Ingredient</button>
+      <button class="btn btn-outline mt-1" onclick="clearIngredients()">Clear All</button>
+    </section>
+
+    <!-- ============ REFERENCE TABLE ============ -->
+    <section class="tool-section" id="reference-table">
+      <h2>Common Cooking Conversions</h2>
+      <div class="reference-grid">
+        <table class="data-table">
+          <thead>
+            <tr><th colspan="3">Volume Equivalents</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>3 tsp</td><td>=</td><td>1 tbsp</td></tr>
+            <tr><td>2 tbsp</td><td>=</td><td>1 fl oz</td></tr>
+            <tr><td>4 tbsp</td><td>=</td><td>&frac14; cup</td></tr>
+            <tr><td>5 tbsp + 1 tsp</td><td>=</td><td>&frac13; cup</td></tr>
+            <tr><td>8 tbsp</td><td>=</td><td>&frac12; cup</td></tr>
+            <tr><td>16 tbsp</td><td>=</td><td>1 cup</td></tr>
+            <tr><td>1 cup</td><td>=</td><td>8 fl oz</td></tr>
+            <tr><td>2 cups</td><td>=</td><td>1 pint</td></tr>
+            <tr><td>2 pints</td><td>=</td><td>1 quart</td></tr>
+            <tr><td>4 quarts</td><td>=</td><td>1 gallon</td></tr>
+            <tr><td>1 cup</td><td>=</td><td>236.59 mL</td></tr>
+            <tr><td>1 liter</td><td>=</td><td>4.227 cups</td></tr>
+          </tbody>
+        </table>
+        <table class="data-table">
+          <thead>
+            <tr><th colspan="3">Weight Equivalents</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1 oz</td><td>=</td><td>28.35 g</td></tr>
+            <tr><td>1 lb</td><td>=</td><td>16 oz</td></tr>
+            <tr><td>1 lb</td><td>=</td><td>453.59 g</td></tr>
+            <tr><td>1 kg</td><td>=</td><td>2.205 lb</td></tr>
+            <tr><td>100 g</td><td>=</td><td>3.527 oz</td></tr>
+          </tbody>
+        </table>
+        <table class="data-table">
+          <thead>
+            <tr><th colspan="3">Temperature</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>250&deg;F</td><td>=</td><td>121&deg;C</td></tr>
+            <tr><td>300&deg;F</td><td>=</td><td>149&deg;C</td></tr>
+            <tr><td>325&deg;F</td><td>=</td><td>163&deg;C</td></tr>
+            <tr><td>350&deg;F</td><td>=</td><td>177&deg;C</td></tr>
+            <tr><td>375&deg;F</td><td>=</td><td>191&deg;C</td></tr>
+            <tr><td>400&deg;F</td><td>=</td><td>204&deg;C</td></tr>
+            <tr><td>425&deg;F</td><td>=</td><td>218&deg;C</td></tr>
+            <tr><td>450&deg;F</td><td>=</td><td>232&deg;C</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ SEO CONTENT ============ -->
+    <section class="info-section">
+      <h2>Kitchen Measurement Conversion Chart</h2>
+      <p>Accurate kitchen measurements are the foundation of consistent cooking and baking. Whether you are working from a recipe that uses metric units while your measuring tools are imperial, or vice versa, having a reliable conversion tool saves time and prevents mistakes. Our kitchen unit converter handles all common cooking measurements: cups, tablespoons, teaspoons, fluid ounces, milliliters, liters, gallons, quarts, pints, ounces, pounds, grams, kilograms, Fahrenheit, and Celsius.</p>
+      <p>Volume conversions are the most common need in everyday cooking. Remember that volume and weight are not interchangeable &mdash; a cup of flour weighs much less than a cup of sugar. For the most accurate results in baking, consider using weight measurements (grams or ounces) rather than volume. Our converter gives you precise values so you can measure with confidence.</p>
+
+      <h2 class="mt-3">How to Scale Recipes Up or Down</h2>
+      <p>Scaling a recipe is straightforward in theory &mdash; multiply every ingredient by the same factor &mdash; but it is easy to make mistakes when doing it by hand, especially with fractions. Our recipe scaler does the math for you. Enter the original number of servings your recipe makes, the number of servings you want, and all your ingredient quantities. The tool instantly calculates the scaled amounts.</p>
+      <p>Keep in mind that some things do not scale linearly. Cooking times, leavening agents (baking powder and baking soda), salt, and spices may need adjustment beyond a simple multiplier. As a general guideline, when doubling a recipe you can double most ingredients directly, but increase salt and seasonings by about 1.5 times and taste as you go. Baking times may also need to be extended slightly for larger volumes.</p>
+
+      <h2 class="mt-3">Common Cooking Conversions</h2>
+      <p>The most frequently needed kitchen conversions are tablespoons to cups (16 tablespoons = 1 cup), teaspoons to tablespoons (3 teaspoons = 1 tablespoon), and cups to milliliters (1 cup = 236.59 mL). For weight, the key conversions are ounces to grams (1 oz = 28.35 g) and pounds to grams (1 lb = 453.59 g). For oven temperatures, the formula is &deg;C = (&deg;F &minus; 32) &times; 5/9, but the reference table above gives you the most common baking temperatures at a glance.</p>
+      <p>Bookmark this page to have all these conversions available whenever you need them. The converter works entirely in your browser with no internet connection required once the page has loaded.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127860;</span>
+          RestaurantCalc
+        </div>
+        <p>Free restaurant management tools for food service professionals. No signup, no fees, no data collection.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="recipe-cost.html">Recipe Cost Calculator</a>
+        <a href="menu-pricing.html">Menu Price Calculator</a>
+        <a href="tip-calculator.html">Tip Distribution</a>
+        <a href="kitchen-converter.html">Kitchen Converter</a>
+      </div>
+      <div class="footer-links">
+        <h4>More Tools</h4>
+        <a href="break-even.html">Break-Even Calculator</a>
+        <a href="par-level.html">Par Level Calculator</a>
+        <a href="catering-quote.html">Catering Quote Generator</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 RestaurantCalc. All tools are free to use. Not financial advice.
+    </div>
+  </footer>
+
+  <script src="../js/shared.js"></script>
+  <script>
+  /* ======================================================
+     KITCHEN UNIT CONVERTER - All conversion logic
+     ====================================================== */
+
+  // --- Conversion factors to a base unit per category ---
+  // Volume: base = mL
+  // Weight: base = g
+  // Temperature: handled separately
+
+  const volumeToML = {
+    'cups':    236.588,
+    'tbsp':    14.787,
+    'tsp':     4.929,
+    'fl oz':   29.574,
+    'mL':      1,
+    'L':       1000,
+    'gallons': 3785.41,
+    'quarts':  946.353,
+    'pints':   473.176
+  };
+
+  const weightToG = {
+    'oz':  28.3495,
+    'lb':  453.592,
+    'g':   1,
+    'kg':  1000
+  };
+
+  const unitLabels = {
+    // Volume
+    'cups':    'Cups',
+    'tbsp':    'Tablespoons (tbsp)',
+    'tsp':     'Teaspoons (tsp)',
+    'fl oz':   'Fluid Ounces (fl oz)',
+    'mL':      'Milliliters (mL)',
+    'L':       'Liters (L)',
+    'gallons': 'Gallons',
+    'quarts':  'Quarts',
+    'pints':   'Pints',
+    // Weight
+    'oz':      'Ounces (oz)',
+    'lb':      'Pounds (lb)',
+    'g':       'Grams (g)',
+    'kg':      'Kilograms (kg)',
+    // Temperature
+    'F':       'Fahrenheit (\u00B0F)',
+    'C':       'Celsius (\u00B0C)'
+  };
+
+  const categories = {
+    volume:      Object.keys(volumeToML),
+    weight:      Object.keys(weightToG),
+    temperature: ['F', 'C']
+  };
+
+  // --- Populate dropdowns ---
+  function populateUnits() {
+    const cat = document.getElementById('conv-category').value;
+    const fromSel = document.getElementById('conv-from');
+    const toSel = document.getElementById('conv-to');
+    const units = categories[cat];
+
+    fromSel.innerHTML = '';
+    toSel.innerHTML = '';
+
+    units.forEach(function(u) {
+      fromSel.innerHTML += '<option value="' + u + '">' + unitLabels[u] + '</option>';
+      toSel.innerHTML += '<option value="' + u + '">' + unitLabels[u] + '</option>';
+    });
+
+    // Set sensible defaults
+    if (cat === 'volume') {
+      fromSel.value = 'cups';
+      toSel.value = 'mL';
+    } else if (cat === 'weight') {
+      fromSel.value = 'oz';
+      toSel.value = 'g';
+    } else {
+      fromSel.value = 'F';
+      toSel.value = 'C';
+    }
+  }
+
+  // --- Core conversion ---
+  function convertValue(cat, from, to, value) {
+    if (cat === 'temperature') {
+      if (from === to) return value;
+      if (from === 'F' && to === 'C') return (value - 32) * 5 / 9;
+      if (from === 'C' && to === 'F') return value * 9 / 5 + 32;
+    }
+
+    if (from === to) return value;
+
+    var factors = (cat === 'volume') ? volumeToML : weightToG;
+    var base = value * factors[from];
+    return base / factors[to];
+  }
+
+  // --- Perform conversion and update display ---
+  function convert() {
+    var value = parseFloat(document.getElementById('conv-value').value);
+    var cat = document.getElementById('conv-category').value;
+    var from = document.getElementById('conv-from').value;
+    var to = document.getElementById('conv-to').value;
+    var resultDiv = document.getElementById('conv-result');
+
+    if (isNaN(value)) {
+      resultDiv.innerHTML = '<span class="result-label">Enter a value to convert</span>';
+      return;
+    }
+
+    var result = convertValue(cat, from, to, value);
+
+    // Format the result nicely
+    var formatted;
+    if (Math.abs(result) >= 1000) {
+      formatted = result.toFixed(2);
+    } else if (Math.abs(result) >= 1) {
+      formatted = result.toFixed(3);
+    } else if (Math.abs(result) >= 0.01) {
+      formatted = result.toFixed(4);
+    } else {
+      formatted = result.toFixed(6);
+    }
+
+    // Remove trailing zeros after decimal
+    if (formatted.indexOf('.') !== -1) {
+      formatted = formatted.replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    var fromLabel = unitLabels[from];
+    var toLabel = unitLabels[to];
+
+    resultDiv.innerHTML =
+      '<span class="result-value">' + value + ' ' + fromLabel + '</span>' +
+      '<span class="result-label"> = ' + formatted + ' ' + toLabel + '</span>';
+  }
+
+  // --- Swap from/to ---
+  function swapUnits() {
+    var fromSel = document.getElementById('conv-from');
+    var toSel = document.getElementById('conv-to');
+    var temp = fromSel.value;
+    fromSel.value = toSel.value;
+    toSel.value = temp;
+    convert();
+  }
+
+  // --- Quick convert buttons ---
+  function quickConvert(cat, from, to, value) {
+    document.getElementById('conv-category').value = cat;
+    populateUnits();
+    document.getElementById('conv-from').value = from;
+    document.getElementById('conv-to').value = to;
+    document.getElementById('conv-value').value = value;
+    convert();
+
+    // Scroll to converter
+    document.getElementById('unit-converter').scrollIntoView({ behavior: 'smooth' });
+  }
+
+
+  /* ======================================================
+     RECIPE SCALER
+     ====================================================== */
+
+  var ingredientCount = 0;
+
+  function addIngredient(name, qty, unit) {
+    name = name || '';
+    qty = qty || '';
+    unit = unit || '';
+    ingredientCount++;
+    var tbody = document.getElementById('ingredient-tbody');
+    var tr = document.createElement('tr');
+    tr.id = 'ing-row-' + ingredientCount;
+    tr.innerHTML =
+      '<td><input type="text" class="ing-name" placeholder="e.g. All-purpose flour" value="' + name + '"></td>' +
+      '<td><input type="number" class="ing-qty" step="any" min="0" placeholder="0" value="' + qty + '" oninput="scaleRecipe()"></td>' +
+      '<td><select class="ing-unit">' +
+        '<option value="">--</option>' +
+        '<option value="cups"' + (unit === 'cups' ? ' selected' : '') + '>cups</option>' +
+        '<option value="tbsp"' + (unit === 'tbsp' ? ' selected' : '') + '>tbsp</option>' +
+        '<option value="tsp"' + (unit === 'tsp' ? ' selected' : '') + '>tsp</option>' +
+        '<option value="fl oz"' + (unit === 'fl oz' ? ' selected' : '') + '>fl oz</option>' +
+        '<option value="mL"' + (unit === 'mL' ? ' selected' : '') + '>mL</option>' +
+        '<option value="L"' + (unit === 'L' ? ' selected' : '') + '>L</option>' +
+        '<option value="oz"' + (unit === 'oz' ? ' selected' : '') + '>oz</option>' +
+        '<option value="lb"' + (unit === 'lb' ? ' selected' : '') + '>lb</option>' +
+        '<option value="g"' + (unit === 'g' ? ' selected' : '') + '>g</option>' +
+        '<option value="kg"' + (unit === 'kg' ? ' selected' : '') + '>kg</option>' +
+        '<option value="whole"' + (unit === 'whole' ? ' selected' : '') + '>whole</option>' +
+        '<option value="pinch"' + (unit === 'pinch' ? ' selected' : '') + '>pinch</option>' +
+      '</select></td>' +
+      '<td class="scaled-qty">--</td>' +
+      '<td><button class="btn btn-small btn-danger" onclick="removeIngredient(' + ingredientCount + ')" title="Remove">&times;</button></td>';
+    tbody.appendChild(tr);
+    scaleRecipe();
+  }
+
+  function removeIngredient(id) {
+    var row = document.getElementById('ing-row-' + id);
+    if (row) row.remove();
+    scaleRecipe();
+  }
+
+  function clearIngredients() {
+    document.getElementById('ingredient-tbody').innerHTML = '';
+    ingredientCount = 0;
+    scaleRecipe();
+  }
+
+  function scaleRecipe() {
+    var orig = parseFloat(document.getElementById('orig-servings').value);
+    var desired = parseFloat(document.getElementById('desired-servings').value);
+    var factor = (orig > 0 && desired > 0) ? desired / orig : 0;
+
+    // Display scale factor
+    document.getElementById('scale-factor').textContent = factor > 0 ? factor.toFixed(2) + 'x' : '--';
+
+    // Update all scaled quantities
+    var rows = document.getElementById('ingredient-tbody').querySelectorAll('tr');
+    rows.forEach(function(row) {
+      var qtyInput = row.querySelector('.ing-qty');
+      var scaledCell = row.querySelector('.scaled-qty');
+      var qty = parseFloat(qtyInput.value);
+      if (!isNaN(qty) && factor > 0) {
+        var scaled = qty * factor;
+        // Format nicely
+        if (scaled === Math.floor(scaled)) {
+          scaledCell.textContent = scaled.toString();
+        } else {
+          scaledCell.textContent = parseFloat(scaled.toFixed(3)).toString();
+        }
+      } else {
+        scaledCell.textContent = '--';
+      }
+    });
+  }
+
+
+  /* ======================================================
+     INITIALIZATION
+     ====================================================== */
+
+  (function init() {
+    populateUnits();
+    convert();
+
+    // Add a few sample ingredients to the recipe scaler
+    addIngredient('All-purpose flour', 2, 'cups');
+    addIngredient('Granulated sugar', 1, 'cups');
+    addIngredient('Butter', 8, 'tbsp');
+    addIngredient('Eggs', 3, 'whole');
+    addIngredient('Vanilla extract', 2, 'tsp');
+    addIngredient('Salt', 1, 'pinch');
+  })();
+  </script>
+
+  <style>
+    /* Tool-specific styles */
+    .converter-controls,
+    .scaler-controls {
+      background: var(--card-bg, #fff);
+      border: 1px solid var(--border, #e0e0e0);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .converter-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .converter-row .form-group {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .swap-btn-wrap {
+      display: flex;
+      align-items: center;
+      padding-bottom: 0.25rem;
+    }
+
+    .result-display {
+      background: var(--bg, #f8f9fa);
+      border: 2px solid var(--primary, #e67e22);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .result-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary, #e67e22);
+    }
+
+    .result-label {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .quick-converts {
+      margin-top: 2rem;
+    }
+
+    .quick-converts h3 {
+      margin-bottom: 1rem;
+    }
+
+    .quick-btn-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .quick-btn-grid .btn {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.75rem;
+    }
+
+    .scale-factor-display {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary, #e67e22);
+      padding: 0.25rem 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid var(--border, #e0e0e0);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+    }
+
+    .data-table th {
+      background: var(--bg, #f8f9fa);
+      font-weight: 600;
+    }
+
+    .data-table input[type="text"],
+    .data-table input[type="number"],
+    .data-table select {
+      width: 100%;
+      border: 1px solid var(--border, #ddd);
+      border-radius: 4px;
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .data-table .scaled-qty {
+      font-weight: 700;
+      color: var(--primary, #e67e22);
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .reference-grid .data-table td:nth-child(2) {
+      text-align: center;
+      font-weight: 700;
+      width: 30px;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-small {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.85rem;
+      line-height: 1;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary, #e67e22);
+      color: var(--primary, #e67e22);
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .btn-outline:hover {
+      background: var(--primary, #e67e22);
+      color: #fff;
+    }
+
+    .tool-section {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 1rem;
+    }
+
+    .tool-section h2 {
+      margin-bottom: 1rem;
+    }
+
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 2rem; }
+
+    @media (max-width: 600px) {
+      .converter-row {
+        flex-direction: column;
+      }
+      .converter-row .form-group {
+        min-width: 100%;
+      }
+      .swap-btn-wrap {
+        justify-content: center;
+      }
+      .result-value,
+      .result-label {
+        font-size: 1rem;
+        display: block;
+      }
+    }
+  </style>
+</body>
+</html>

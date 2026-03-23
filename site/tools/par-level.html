@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Par Level Calculator | Restaurant Inventory Management Tool</title>
+  <meta name="description" content="Calculate optimal par levels and reorder points for your restaurant inventory. Track daily usage, lead times, and safety stock. Free, no signup.">
+  <meta name="keywords" content="par level calculator, restaurant inventory, reorder point, safety stock, daily usage, lead time, inventory management">
+  <link rel="canonical" href="https://restaurantcalc.com/tools/par-level.html">
+  <meta property="og:title" content="Free Par Level Calculator | Restaurant Inventory Management Tool">
+  <meta property="og:description" content="Calculate optimal par levels and reorder points for your restaurant inventory. Track daily usage, lead times, and safety stock. Free, no signup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://restaurantcalc.com/tools/par-level.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Par Level Calculator",
+    "url": "https://restaurantcalc.com/tools/par-level.html",
+    "description": "Calculate optimal par levels and reorder points for your restaurant inventory. Track daily usage, lead times, and safety stock.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "RestaurantCalc",
+      "url": "https://restaurantcalc.com/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">&#127860;</span>
+        RestaurantCalc
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+      <nav>
+        <a href="../">Home</a>
+        <a href="recipe-cost.html">Recipe Cost</a>
+        <a href="menu-pricing.html">Menu Pricing</a>
+        <a href="tip-calculator.html">Tips</a>
+        <a href="kitchen-converter.html">Converter</a>
+        <a href="break-even.html">Break-Even</a>
+        <a href="par-level.html" class="active">Par Level</a>
+        <a href="catering-quote.html">Catering</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">
+      <a href="../">Home</a> &raquo; Par Level Calculator
+    </div>
+
+    <div class="tool-header">
+      <h1>Par Level Calculator</h1>
+      <p>Calculate optimal inventory par levels and reorder points based on daily usage, vendor lead times, and safety stock. Keep your kitchen stocked without over-ordering.</p>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="result-box" id="resultBox">
+      <h3>Inventory Summary</h3>
+      <div class="result-stats">
+        <div class="stat">
+          <span class="stat-value" id="totalItems">3</span>
+          <span class="stat-label">Items Tracked</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="belowReorder">0</span>
+          <span class="stat-label">Below Reorder Point</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="totalParUnits">0</span>
+          <span class="stat-label">Total Par Units</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="avgLeadTime">0</span>
+          <span class="stat-label">Avg Lead Time (days)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="panel">
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="addItem()">+ Add Item</button>
+        <button class="btn btn-accent" onclick="saveInventory()">Save Inventory</button>
+        <button class="btn btn-secondary" onclick="loadInventory()">Load Inventory</button>
+        <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+        <button class="btn btn-outline" onclick="window.print()">Print</button>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="panel">
+      <div class="panel-title">Inventory Items</div>
+      <div class="table-wrap">
+        <table id="parTable">
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Unit</th>
+              <th>Avg Daily Usage</th>
+              <th>Lead Time (days)</th>
+              <th>Safety Stock (days)</th>
+              <th>Par Level</th>
+              <th>Reorder Point</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="parTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SEO Content -->
+    <section class="info-section">
+      <h2>What Are Par Levels in a Restaurant?</h2>
+      <p>A par level is the minimum amount of a given item that must be kept on hand at all times to meet customer demand between deliveries. Think of it as your "always have at least this much" number. If your stock of an item drops below its par level, you risk running out before the next delivery arrives, leading to menu shortages, unhappy customers, and lost revenue.</p>
+      <p>Par levels are one of the most fundamental concepts in restaurant inventory management. They bridge the gap between how fast you use an ingredient and how long it takes your vendor to restock it. Every item in your kitchen &mdash; from proteins and produce to dry goods and paper supplies &mdash; should have a par level set based on real usage data.</p>
+      <p>Without par levels, managers tend to either over-order (tying up cash and increasing waste) or under-order (causing 86'd menu items and emergency purchases at retail prices). A properly set par level eliminates the guesswork and turns ordering into a simple, repeatable process.</p>
+
+      <h2 class="mt-3">How to Calculate Par Levels</h2>
+      <p>The core formula for calculating a par level is:</p>
+      <p><strong>Par Level = Average Daily Usage &times; (Lead Time in Days + Safety Stock in Days)</strong></p>
+      <p>And the closely related reorder point tells you when to place the order:</p>
+      <p><strong>Reorder Point = Average Daily Usage &times; Lead Time in Days</strong></p>
+      <p>Here is a worked example. Suppose your restaurant uses an average of <strong>10 pounds of chicken breast per day</strong>. Your poultry vendor has a <strong>2-day lead time</strong> (you order Monday, it arrives Wednesday). You want <strong>1 day of safety stock</strong> as a buffer for unexpected demand or a late delivery.</p>
+      <ul>
+        <li><strong>Par Level</strong> = 10 lbs/day &times; (2 days + 1 day) = <strong>30 lbs</strong></li>
+        <li><strong>Reorder Point</strong> = 10 lbs/day &times; 2 days = <strong>20 lbs</strong></li>
+      </ul>
+      <p>This means you should always have 30 pounds of chicken breast on hand. When your stock drops to 20 pounds, it is time to place a new order. By the time the delivery arrives in 2 days, you will have used 20 pounds of your 30-pound stock, leaving you right at the safety buffer &mdash; exactly as planned.</p>
+
+      <h2 class="mt-3">Par Level Best Practices</h2>
+      <ul>
+        <li><strong>Use real data, not guesses.</strong> Track your actual daily usage for at least 2-4 weeks before setting par levels. POS reports and waste logs are your best friends here.</li>
+        <li><strong>Adjust for seasonality.</strong> Your par levels in July will look different from December. Review and update at least monthly, and more often during seasonal transitions.</li>
+        <li><strong>Account for weekday vs. weekend differences.</strong> If Saturday volume is double Tuesday volume, consider separate par levels or use a weighted average that reflects your weekly pattern.</li>
+        <li><strong>Keep safety stock reasonable.</strong> One day of safety stock is a good starting point for most items. Perishable items with short shelf lives may need less; critical items with unreliable suppliers may need more.</li>
+        <li><strong>Factor in shelf life.</strong> There is no point setting a par level of 50 pounds of fresh fish if it only lasts 2 days. Par levels must respect the item's usable life.</li>
+        <li><strong>Re-evaluate lead times regularly.</strong> Vendor lead times can change, especially during supply chain disruptions. Confirm lead times with your reps quarterly.</li>
+        <li><strong>Train your team.</strong> Par levels only work if the people doing the ordering understand them. Post par level sheets in the walk-in and dry storage, and make the ordering process foolproof.</li>
+        <li><strong>Review waste alongside pars.</strong> If an item consistently has high waste, your par level may be too high, or you may have a usage tracking problem. Tie your par level reviews to your waste tracking.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127860;</span>
+          RestaurantCalc
+        </div>
+        <p>Free restaurant management tools for food service professionals. No signup, no fees, no data collection.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="recipe-cost.html">Recipe Cost Calculator</a>
+        <a href="menu-pricing.html">Menu Price Calculator</a>
+        <a href="tip-calculator.html">Tip Distribution</a>
+        <a href="kitchen-converter.html">Kitchen Converter</a>
+      </div>
+      <div class="footer-links">
+        <h4>More Tools</h4>
+        <a href="break-even.html">Break-Even Calculator</a>
+        <a href="par-level.html">Par Level Calculator</a>
+        <a href="catering-quote.html">Catering Quote Generator</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 RestaurantCalc. All tools are free to use. Not financial advice.
+    </div>
+  </footer>
+
+  <script src="../js/shared.js"></script>
+  <script>
+    // Par Level Calculator - Inline JS
+
+    var items = [];
+    var unitOptions = ['each', 'lb', 'oz', 'case', 'bag', 'box', 'gallon', 'dozen', 'bunch', 'can'];
+
+    // Initialize with example data
+    function initDefaults() {
+      items = [
+        { id: generateId(), name: 'Chicken Breast', unit: 'lb', dailyUsage: 10, leadTime: 2, safetyDays: 1 },
+        { id: generateId(), name: 'House Salad Mix', unit: 'bag', dailyUsage: 5, leadTime: 1, safetyDays: 1 },
+        { id: generateId(), name: 'Burger Buns', unit: 'dozen', dailyUsage: 8, leadTime: 1, safetyDays: 1 }
+      ];
+    }
+
+    function calcParLevel(dailyUsage, leadTime, safetyDays) {
+      return dailyUsage * (leadTime + safetyDays);
+    }
+
+    function calcReorderPoint(dailyUsage, leadTime) {
+      return dailyUsage * leadTime;
+    }
+
+    function buildUnitSelect(selected) {
+      var html = '<select onchange="onItemChange(this)">';
+      for (var i = 0; i < unitOptions.length; i++) {
+        var sel = unitOptions[i] === selected ? ' selected' : '';
+        html += '<option value="' + unitOptions[i] + '"' + sel + '>' + unitOptions[i] + '</option>';
+      }
+      html += '</select>';
+      return html;
+    }
+
+    function renderTable() {
+      var tbody = document.getElementById('parTableBody');
+      var html = '';
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var par = calcParLevel(item.dailyUsage, item.leadTime, item.safetyDays);
+        var reorder = calcReorderPoint(item.dailyUsage, item.leadTime);
+
+        html += '<tr data-id="' + item.id + '">';
+        html += '<td><input type="text" value="' + escapeHtml(item.name) + '" onchange="onItemChange(this)" data-field="name" style="min-width:120px"></td>';
+        html += '<td>' + buildUnitSelect(item.unit) + '</td>';
+        html += '<td><input type="number" value="' + item.dailyUsage + '" min="0" step="0.1" onchange="onItemChange(this)" data-field="dailyUsage" style="width:90px"></td>';
+        html += '<td><input type="number" value="' + item.leadTime + '" min="0" step="1" onchange="onItemChange(this)" data-field="leadTime" style="width:80px"></td>';
+        html += '<td><input type="number" value="' + item.safetyDays + '" min="0" step="1" onchange="onItemChange(this)" data-field="safetyDays" style="width:80px"></td>';
+        html += '<td><strong>' + par.toFixed(1) + '</strong> ' + item.unit + '</td>';
+        html += '<td>' + reorder.toFixed(1) + ' ' + item.unit + '</td>';
+        html += '<td><button class="btn btn-danger btn-sm" onclick="deleteItem(\'' + item.id + '\')" title="Delete item">&times;</button></td>';
+        html += '</tr>';
+      }
+
+      tbody.innerHTML = html;
+      updateSummary();
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML.replace(/"/g, '&quot;');
+    }
+
+    function onItemChange(el) {
+      var row = el.closest('tr');
+      var id = row.getAttribute('data-id');
+      var item = items.find(function(it) { return it.id === id; });
+      if (!item) return;
+
+      if (el.tagName === 'SELECT') {
+        item.unit = el.value;
+      } else {
+        var field = el.getAttribute('data-field');
+        if (field === 'name') {
+          item.name = el.value;
+        } else {
+          item[field] = parseNum(el.value);
+        }
+      }
+
+      renderTable();
+    }
+
+    function addItem() {
+      items.push({
+        id: generateId(),
+        name: '',
+        unit: 'each',
+        dailyUsage: 0,
+        leadTime: 1,
+        safetyDays: 1
+      });
+      renderTable();
+
+      // Focus the name input of the new row
+      var tbody = document.getElementById('parTableBody');
+      var lastRow = tbody.lastElementChild;
+      if (lastRow) {
+        var nameInput = lastRow.querySelector('input[data-field="name"]');
+        if (nameInput) nameInput.focus();
+      }
+    }
+
+    function deleteItem(id) {
+      items = items.filter(function(it) { return it.id !== id; });
+      renderTable();
+    }
+
+    function updateSummary() {
+      var totalItems = items.length;
+      var totalPar = 0;
+      var totalLeadTime = 0;
+      var belowReorder = 0;
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var par = calcParLevel(item.dailyUsage, item.leadTime, item.safetyDays);
+        totalPar += par;
+        totalLeadTime += item.leadTime;
+
+        // Flag items with zero usage as potentially below reorder (no usage data entered)
+        if (item.dailyUsage === 0 && item.name !== '') {
+          belowReorder++;
+        }
+      }
+
+      var avgLead = totalItems > 0 ? (totalLeadTime / totalItems) : 0;
+
+      document.getElementById('totalItems').textContent = totalItems;
+      document.getElementById('belowReorder').textContent = belowReorder;
+      document.getElementById('totalParUnits').textContent = totalPar.toFixed(1);
+      document.getElementById('avgLeadTime').textContent = avgLead.toFixed(1);
+
+      // Color the below-reorder stat
+      var belowEl = document.getElementById('belowReorder');
+      belowEl.style.color = belowReorder > 0 ? '#e74c3c' : '';
+    }
+
+    function saveInventory() {
+      if (items.length === 0) {
+        showToast('No items to save.', 'error');
+        return;
+      }
+      var success = saveData('par_levels', items);
+      if (success) {
+        showToast('Inventory saved successfully!', 'success');
+      } else {
+        showToast('Error saving inventory.', 'error');
+      }
+    }
+
+    function loadInventory() {
+      var data = loadData('par_levels');
+      if (data && data.length > 0) {
+        items = data;
+        renderTable();
+        showToast('Inventory loaded! (' + items.length + ' items)', 'success');
+      } else {
+        showToast('No saved inventory found.', 'error');
+      }
+    }
+
+    function exportCSV() {
+      if (items.length === 0) {
+        showToast('No items to export.', 'error');
+        return;
+      }
+
+      var rows = [['Item Name', 'Unit', 'Avg Daily Usage', 'Lead Time (days)', 'Safety Stock (days)', 'Par Level', 'Reorder Point']];
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var par = calcParLevel(item.dailyUsage, item.leadTime, item.safetyDays);
+        var reorder = calcReorderPoint(item.dailyUsage, item.leadTime);
+        rows.push([
+          '"' + item.name.replace(/"/g, '""') + '"',
+          item.unit,
+          item.dailyUsage,
+          item.leadTime,
+          item.safetyDays,
+          par.toFixed(1),
+          reorder.toFixed(1)
+        ]);
+      }
+
+      var csv = rows.map(function(r) { return r.join(','); }).join('\n');
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'par-levels.csv';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('CSV exported!', 'success');
+    }
+
+    // Initialize
+    initDefaults();
+    renderTable();
+  </script>
+</body>
+</html>

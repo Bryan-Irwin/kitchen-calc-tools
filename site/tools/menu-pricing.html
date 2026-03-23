@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Menu Price Calculator | Set Profitable Restaurant Prices</title>
+  <meta name="description" content="Calculate the ideal menu price for every dish based on your food costs and target margins. Free tool for restaurant owners.">
+  <meta name="keywords" content="menu price calculator, food cost percentage, restaurant menu pricing, menu pricing strategy, food cost calculator, restaurant profit margin">
+  <link rel="canonical" href="https://restaurantcalc.com/tools/menu-pricing.html">
+  <meta property="og:title" content="Free Menu Price Calculator | Set Profitable Restaurant Prices">
+  <meta property="og:description" content="Calculate the ideal menu price for every dish based on your food costs and target margins. Free tool for restaurant owners.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://restaurantcalc.com/tools/menu-pricing.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Menu Price Calculator",
+    "url": "https://restaurantcalc.com/tools/menu-pricing.html",
+    "description": "Calculate the ideal menu price for every dish based on your food costs and target margins. Free tool for restaurant owners.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "RestaurantCalc",
+      "url": "https://restaurantcalc.com/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">&#127860;</span>
+        RestaurantCalc
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+      <nav>
+        <a href="../">Home</a>
+        <a href="recipe-cost.html">Recipe Cost</a>
+        <a href="menu-pricing.html" class="active">Menu Pricing</a>
+        <a href="tip-calculator.html">Tips</a>
+        <a href="kitchen-converter.html">Converter</a>
+        <a href="break-even.html">Break-Even</a>
+        <a href="par-level.html">Par Level</a>
+        <a href="catering-quote.html">Catering</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">
+      <a href="../">Home</a> &rsaquo; Menu Price Calculator
+    </div>
+
+    <div class="tool-header">
+      <h1>&#128176; Menu Price Calculator</h1>
+      <p>Enter your food cost per plate and target food cost percentage to calculate the ideal menu price, gross profit, and margin for every dish.</p>
+    </div>
+
+    <div class="tool-layout">
+      <div class="tool-main">
+
+        <!-- Target Food Cost Slider -->
+        <div class="panel">
+          <div class="panel-title">Target Food Cost %</div>
+          <div class="form-group">
+            <label for="targetPct">Drag the slider or type a value (20% &ndash; 45%)</label>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <input type="range" id="targetSlider" min="20" max="45" step="0.5" value="30" style="flex:1;cursor:pointer;">
+              <input type="number" id="targetPct" min="20" max="45" step="0.5" value="30" style="width:80px;text-align:center;">
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu Items Table -->
+        <div class="panel">
+          <div class="panel-title">Menu Items</div>
+          <div class="btn-group mb-2">
+            <button class="btn btn-primary" id="addItemBtn">+ Add Item</button>
+            <button class="btn btn-outline" id="loadRecipesBtn">Load from Saved Recipes</button>
+          </div>
+          <div class="table-wrap">
+            <table id="menuTable">
+              <thead>
+                <tr>
+                  <th>Dish Name</th>
+                  <th>Food Cost</th>
+                  <th>Suggested Price</th>
+                  <th>Gross Profit</th>
+                  <th>Margin %</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="menuBody">
+                <!-- rows inserted by JS -->
+              </tbody>
+            </table>
+          </div>
+          <p id="emptyMsg" class="text-muted text-center mt-2" style="font-size:0.9rem;">No items yet. Click "Add Item" or "Load from Saved Recipes" to get started.</p>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="result-box" id="resultBox" style="display:none;">
+          <h3>Pricing Summary</h3>
+          <div class="result-stats">
+            <div class="stat">
+              <span class="stat-value" id="statTotalItems">0</span>
+              <span class="stat-label">Total Items</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="statAvgPrice">$0.00</span>
+              <span class="stat-label">Avg Menu Price</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="statAvgMargin">0.0%</span>
+              <span class="stat-label">Avg Margin</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="statAvgProfit">$0.00</span>
+              <span class="stat-label">Avg Gross Profit</span>
+            </div>
+          </div>
+          <div class="btn-group mt-3" style="justify-content:center;">
+            <button class="btn btn-secondary" id="exportBtn">Export CSV</button>
+            <button class="btn btn-outline" id="printBtn">Print / PDF</button>
+          </div>
+        </div>
+
+        <!-- SEO Content -->
+        <section class="info-section">
+          <h2>How to Price Your Restaurant Menu</h2>
+          <p>Setting the right menu price is one of the most important decisions a restaurant owner makes. Price too high and you drive customers away; price too low and you eat into your profits. The food cost percentage method is the industry-standard approach that balances customer expectations with sustainable margins.</p>
+          <p>The method works by dividing your raw food cost per plate by your target food cost percentage. For example, if a dish costs $4.50 in ingredients and you target a 30% food cost, the suggested menu price is $4.50 / 0.30 = $15.00. This ensures that for every dollar the customer spends, only 30 cents goes toward ingredients, leaving 70 cents for labor, overhead, and profit.</p>
+          <p>Most full-service restaurants aim for a food cost percentage between 28% and 35%. Fast-casual and quick-service concepts often target 25% to 30%, while high-end restaurants with significant labor costs may accept 35% to 40% food costs because they make up the difference on premium pricing and beverage sales.</p>
+
+          <h2 class="mt-3">Understanding Food Cost Percentage</h2>
+          <p>The food cost percentage formula is straightforward:</p>
+          <p><strong>Food Cost % = (Cost of Ingredients / Menu Price) &times; 100</strong></p>
+          <p>This single number tells you how much of each revenue dollar goes toward raw food. Tracking food cost percentage across your entire menu helps you identify which dishes are your most and least profitable. A dish with a low food cost percentage generates more gross profit per plate, while a dish with a high percentage may need to be re-engineered or repriced.</p>
+          <p>To calculate the ideal menu price from a known food cost, you invert the formula:</p>
+          <p><strong>Menu Price = Cost of Ingredients / Target Food Cost %</strong></p>
+          <p>This is exactly what the calculator above does for every item you enter.</p>
+
+          <h2 class="mt-3">Menu Pricing Strategies</h2>
+          <p>Beyond the food cost percentage method, successful restaurants use a combination of pricing strategies to maximize revenue:</p>
+          <ul>
+            <li><strong>Psychological pricing</strong> &mdash; Prices ending in .95 or .99 feel significantly cheaper than rounded numbers. A dish at $14.95 feels more approachable than one at $15.00, even though the difference is negligible. Some upscale restaurants do the opposite, using whole-dollar pricing (e.g., $15) to convey simplicity and quality.</li>
+            <li><strong>Competitive pricing</strong> &mdash; Research what similar restaurants in your area charge for comparable dishes. You do not need to match their prices, but understanding the local market prevents you from pricing yourself out of consideration or leaving money on the table.</li>
+            <li><strong>Value-based pricing</strong> &mdash; Some dishes command a premium because of perceived value: unique ingredients, elaborate presentation, or a signature preparation. If customers associate a dish with a special experience, you can price above what the food cost percentage alone would suggest.</li>
+            <li><strong>Anchor pricing</strong> &mdash; Place a high-priced item near the top of a menu section. This "anchor" makes the other items look like better deals by comparison, nudging customers toward mid-range dishes with strong margins.</li>
+            <li><strong>Bundle pricing</strong> &mdash; Offer combo meals or prix-fixe menus that package high-margin items (like beverages and desserts) with entrees. Customers perceive a deal while your blended food cost stays healthy.</li>
+          </ul>
+          <p>The best pricing strategy combines data from your food cost calculations with an understanding of your customers, your competition, and your brand positioning. Use this calculator as a starting point, then refine your prices based on real-world feedback and sales data.</p>
+        </section>
+
+      </div>
+
+      <div class="tool-sidebar">
+        <div class="ad-slot ad-slot-sidebar">Ad Space</div>
+        <div class="panel">
+          <div class="panel-title">Quick Tips</div>
+          <ul style="font-size:0.88rem;color:var(--text-light);padding-left:16px;">
+            <li style="margin-bottom:8px;">Most restaurants target <strong>28&ndash;35%</strong> food cost.</li>
+            <li style="margin-bottom:8px;">Beverages typically have <strong>15&ndash;25%</strong> food cost.</li>
+            <li style="margin-bottom:8px;">Factor in waste, prep loss, and portion variance.</li>
+            <li style="margin-bottom:8px;">Re-price your menu at least <strong>twice a year</strong>.</li>
+            <li>Use the <a href="recipe-cost.html">Recipe Cost Calculator</a> to get accurate per-plate costs.</li>
+          </ul>
+        </div>
+        <div class="affiliate-cta">
+          <h3>Track Real-Time Food Costs</h3>
+          <p>Pair these calculations with inventory management software to keep margins on target every week.</p>
+          <a href="#" class="btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127860;</span>
+          RestaurantCalc
+        </div>
+        <p>Free restaurant management tools for food service professionals. No signup, no fees, no data collection.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="recipe-cost.html">Recipe Cost Calculator</a>
+        <a href="menu-pricing.html">Menu Price Calculator</a>
+        <a href="tip-calculator.html">Tip Distribution</a>
+        <a href="kitchen-converter.html">Kitchen Converter</a>
+      </div>
+      <div class="footer-links">
+        <h4>More Tools</h4>
+        <a href="break-even.html">Break-Even Calculator</a>
+        <a href="par-level.html">Par Level Calculator</a>
+        <a href="catering-quote.html">Catering Quote Generator</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 RestaurantCalc. All tools are free to use. Not financial advice.
+    </div>
+  </footer>
+
+  <script src="../js/shared.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    // ===== State =====
+    var items = [];
+    var targetPct = 30;
+
+    // ===== DOM refs =====
+    var targetSlider = document.getElementById('targetSlider');
+    var targetInput = document.getElementById('targetPct');
+    var menuBody = document.getElementById('menuBody');
+    var emptyMsg = document.getElementById('emptyMsg');
+    var resultBox = document.getElementById('resultBox');
+    var addItemBtn = document.getElementById('addItemBtn');
+    var loadRecipesBtn = document.getElementById('loadRecipesBtn');
+    var exportBtn = document.getElementById('exportBtn');
+    var printBtn = document.getElementById('printBtn');
+
+    // ===== Slider / Input Sync =====
+    targetSlider.addEventListener('input', function() {
+      targetPct = parseFloat(this.value);
+      targetInput.value = targetPct;
+      recalcAll();
+    });
+
+    targetInput.addEventListener('input', function() {
+      var v = parseFloat(this.value);
+      if (isNaN(v)) return;
+      if (v < 20) v = 20;
+      if (v > 45) v = 45;
+      targetPct = v;
+      targetSlider.value = v;
+      recalcAll();
+    });
+
+    // ===== Add Item =====
+    addItemBtn.addEventListener('click', function() {
+      addItem('', 0);
+      // Focus the new dish name input
+      var rows = menuBody.querySelectorAll('tr');
+      if (rows.length > 0) {
+        var lastRow = rows[rows.length - 1];
+        var nameInput = lastRow.querySelector('.dish-name');
+        if (nameInput) nameInput.focus();
+      }
+    });
+
+    function addItem(name, foodCost) {
+      var id = generateId();
+      items.push({ id: id, name: name, foodCost: foodCost });
+      renderRow(id, name, foodCost);
+      recalcAll();
+    }
+
+    function renderRow(id, name, foodCost) {
+      var suggestedPrice = foodCost > 0 && targetPct > 0 ? foodCost / (targetPct / 100) : 0;
+      var grossProfit = suggestedPrice - foodCost;
+      var margin = suggestedPrice > 0 ? (grossProfit / suggestedPrice) * 100 : 0;
+
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-id', id);
+      tr.innerHTML =
+        '<td><input type="text" class="dish-name" value="' + escapeAttr(name) + '" placeholder="e.g. Grilled Salmon" style="min-width:140px;"></td>' +
+        '<td><div style="display:flex;align-items:center;gap:2px;">$<input type="number" class="food-cost" value="' + (foodCost > 0 ? foodCost.toFixed(2) : '') + '" placeholder="0.00" min="0" step="0.01" style="width:90px;"></div></td>' +
+        '<td class="calc-price">' + formatCurrency(suggestedPrice) + '</td>' +
+        '<td class="calc-profit">' + formatCurrency(grossProfit) + '</td>' +
+        '<td class="calc-margin">' + formatPercent(margin) + '</td>' +
+        '<td><button class="btn btn-danger btn-sm delete-row-btn" title="Remove item">&times;</button></td>';
+      menuBody.appendChild(tr);
+
+      // Event listeners for the new row
+      var nameInput = tr.querySelector('.dish-name');
+      var costInput = tr.querySelector('.food-cost');
+      var deleteBtn = tr.querySelector('.delete-row-btn');
+
+      nameInput.addEventListener('input', function() {
+        var item = findItem(id);
+        if (item) item.name = this.value;
+      });
+
+      costInput.addEventListener('input', function() {
+        var item = findItem(id);
+        if (item) {
+          item.foodCost = parseNum(this.value);
+          recalcRow(tr, item.foodCost);
+          updateSummary();
+        }
+      });
+
+      deleteBtn.addEventListener('click', function() {
+        removeItem(id);
+      });
+    }
+
+    function findItem(id) {
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].id === id) return items[i];
+      }
+      return null;
+    }
+
+    function removeItem(id) {
+      items = items.filter(function(it) { return it.id !== id; });
+      var row = menuBody.querySelector('tr[data-id="' + id + '"]');
+      if (row) row.remove();
+      recalcAll();
+    }
+
+    function recalcRow(tr, foodCost) {
+      var suggestedPrice = foodCost > 0 && targetPct > 0 ? foodCost / (targetPct / 100) : 0;
+      var grossProfit = suggestedPrice - foodCost;
+      var margin = suggestedPrice > 0 ? (grossProfit / suggestedPrice) * 100 : 0;
+
+      tr.querySelector('.calc-price').textContent = formatCurrency(suggestedPrice);
+      tr.querySelector('.calc-profit').textContent = formatCurrency(grossProfit);
+      tr.querySelector('.calc-margin').textContent = formatPercent(margin);
+    }
+
+    function recalcAll() {
+      var rows = menuBody.querySelectorAll('tr');
+      rows.forEach(function(tr) {
+        var id = tr.getAttribute('data-id');
+        var item = findItem(id);
+        if (item) recalcRow(tr, item.foodCost);
+      });
+      updateSummary();
+    }
+
+    function updateSummary() {
+      var count = items.length;
+      emptyMsg.style.display = count === 0 ? 'block' : 'none';
+      resultBox.style.display = count > 0 ? 'block' : 'none';
+
+      if (count === 0) return;
+
+      var totalPrice = 0;
+      var totalMargin = 0;
+      var totalProfit = 0;
+      var validCount = 0;
+
+      items.forEach(function(item) {
+        if (item.foodCost > 0 && targetPct > 0) {
+          var price = item.foodCost / (targetPct / 100);
+          var profit = price - item.foodCost;
+          var margin = (profit / price) * 100;
+          totalPrice += price;
+          totalProfit += profit;
+          totalMargin += margin;
+          validCount++;
+        }
+      });
+
+      document.getElementById('statTotalItems').textContent = count;
+      document.getElementById('statAvgPrice').textContent = validCount > 0 ? formatCurrency(totalPrice / validCount) : '$0.00';
+      document.getElementById('statAvgMargin').textContent = validCount > 0 ? formatPercent(totalMargin / validCount) : '0.0%';
+      document.getElementById('statAvgProfit').textContent = validCount > 0 ? formatCurrency(totalProfit / validCount) : '$0.00';
+    }
+
+    // ===== Load from Saved Recipes =====
+    loadRecipesBtn.addEventListener('click', function() {
+      var recipes = loadData('recipes');
+      if (!recipes || !Array.isArray(recipes) || recipes.length === 0) {
+        showToast('No saved recipes found. Use the Recipe Cost Calculator to save recipes first.', 'error');
+        return;
+      }
+
+      var loaded = 0;
+      recipes.forEach(function(recipe) {
+        var name = recipe.name || recipe.recipeName || 'Unnamed Recipe';
+        var cost = 0;
+
+        // Try to get per-serving cost first, then total cost
+        if (recipe.costPerServing && parseFloat(recipe.costPerServing) > 0) {
+          cost = parseFloat(recipe.costPerServing);
+        } else if (recipe.totalCost && parseFloat(recipe.totalCost) > 0) {
+          cost = parseFloat(recipe.totalCost);
+        } else if (recipe.cost && parseFloat(recipe.cost) > 0) {
+          cost = parseFloat(recipe.cost);
+        }
+
+        if (cost > 0) {
+          addItem(name, Math.round(cost * 100) / 100);
+          loaded++;
+        }
+      });
+
+      if (loaded > 0) {
+        showToast('Loaded ' + loaded + ' recipe(s) from saved data.', 'success');
+      } else {
+        showToast('Saved recipes found but no valid cost data. Make sure recipes have cost per serving calculated.', 'error');
+      }
+    });
+
+    // ===== Export CSV =====
+    exportBtn.addEventListener('click', function() {
+      if (items.length === 0) {
+        showToast('No items to export.', 'error');
+        return;
+      }
+
+      var rows = ['Dish Name,Food Cost,Suggested Price,Gross Profit,Margin %'];
+      items.forEach(function(item) {
+        var price = item.foodCost > 0 && targetPct > 0 ? item.foodCost / (targetPct / 100) : 0;
+        var profit = price - item.foodCost;
+        var margin = price > 0 ? ((profit / price) * 100).toFixed(1) : '0.0';
+        rows.push('"' + item.name.replace(/"/g, '""') + '",' + item.foodCost.toFixed(2) + ',' + price.toFixed(2) + ',' + profit.toFixed(2) + ',' + margin);
+      });
+
+      var csv = rows.join('\n');
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'menu-pricing-' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported successfully.', 'success');
+    });
+
+    // ===== Print =====
+    printBtn.addEventListener('click', function() {
+      window.print();
+    });
+
+    // ===== Helper =====
+    function escapeAttr(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ===== Init with one empty row =====
+    addItem('', 0);
+
+  })();
+  </script>
+</body>
+</html>

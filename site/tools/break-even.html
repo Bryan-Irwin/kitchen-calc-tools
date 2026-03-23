@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Break-Even Calculator | Free Break-Even Analysis Tool</title>
+  <meta name="description" content="Calculate your restaurant's break-even point. Input fixed costs, variable percentages, and average ticket to see how many covers you need daily.">
+  <meta name="keywords" content="break-even calculator, restaurant break-even, break-even analysis, fixed costs restaurant, variable costs restaurant, covers per day, restaurant profitability">
+  <link rel="canonical" href="https://restaurantcalc.com/tools/break-even.html">
+  <meta property="og:title" content="Restaurant Break-Even Calculator | Free Break-Even Analysis Tool">
+  <meta property="og:description" content="Calculate your restaurant's break-even point. Input fixed costs, variable percentages, and average ticket to see how many covers you need daily.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://restaurantcalc.com/tools/break-even.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Restaurant Break-Even Calculator",
+    "url": "https://restaurantcalc.com/tools/break-even.html",
+    "description": "Calculate your restaurant's break-even point. Input fixed costs, variable percentages, and average ticket to see how many covers you need daily.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "RestaurantCalc",
+      "url": "https://restaurantcalc.com/"
+    }
+  }
+  </script>
+  <style>
+    .fixed-cost-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .fixed-cost-row input[type="text"] {
+      flex: 2;
+    }
+    .fixed-cost-row input[type="number"] {
+      flex: 1;
+      min-width: 100px;
+    }
+    .fixed-cost-row .btn-remove {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+    .fixed-cost-row .btn-remove:hover {
+      background: rgba(231,76,60,0.1);
+    }
+    .slider-group {
+      margin-bottom: 18px;
+    }
+    .slider-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .slider-group label span {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1rem;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border);
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .fixed-costs-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 0;
+      margin-top: 8px;
+      border-top: 2px solid var(--border);
+      color: var(--secondary);
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .result-item {
+      padding: 14px;
+      background: var(--bg-input);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+    .result-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .result-item .result-label {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+    }
+    .result-item .result-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--secondary);
+    }
+    .result-item.highlight {
+      background: linear-gradient(135deg, #fff5eb 0%, #ffecd2 100%);
+      border: 1px solid #f0c27f;
+    }
+    .result-item.highlight .result-value {
+      color: var(--primary);
+    }
+    .profit-indicator {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      margin-top: 16px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    .profit-indicator.profitable {
+      background: linear-gradient(135deg, #d5f5e3 0%, #abebc6 100%);
+      color: #1e8449;
+      border: 1px solid #82e0aa;
+    }
+    .profit-indicator.loss {
+      background: linear-gradient(135deg, #fadbd8 0%, #f5b7b1 100%);
+      color: #c0392b;
+      border: 1px solid #f1948a;
+    }
+    .profit-indicator.neutral {
+      background: var(--bg-input);
+      color: var(--text-light);
+      border: 1px solid var(--border);
+    }
+    .profit-indicator .profit-amount {
+      font-size: 1.6rem;
+      display: block;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">&#127860;</span>
+        RestaurantCalc
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+      <nav>
+        <a href="../">Home</a>
+        <a href="recipe-cost.html">Recipe Cost</a>
+        <a href="menu-pricing.html">Menu Pricing</a>
+        <a href="tip-calculator.html">Tips</a>
+        <a href="kitchen-converter.html">Converter</a>
+        <a href="break-even.html" class="active">Break-Even</a>
+        <a href="par-level.html">Par Level</a>
+        <a href="catering-quote.html">Catering</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">
+      <a href="../">Home</a> &raquo; Break-Even Calculator
+    </div>
+
+    <div class="tool-header">
+      <h1>Restaurant Break-Even Calculator</h1>
+      <p>Find out exactly how many covers you need per day to cover all your costs. Enter your fixed costs, variable cost percentages, and average check to get an instant break-even analysis.</p>
+    </div>
+
+    <div class="tool-layout">
+      <div class="tool-main">
+
+        <!-- Fixed Costs -->
+        <div class="panel">
+          <h2 class="panel-title">Fixed Costs (Monthly)</h2>
+          <div id="fixedCostsContainer"></div>
+          <div class="fixed-costs-total">
+            <span>Total Fixed Costs</span>
+            <span id="totalFixedCosts">$0.00</span>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm mt-2" onclick="addFixedCostRow('', '')">+ Add Line Item</button>
+        </div>
+
+        <!-- Variable Costs -->
+        <div class="panel">
+          <h2 class="panel-title">Variable Costs</h2>
+          <div class="slider-group">
+            <label>Food Cost % <span id="foodCostDisplay">30.0%</span></label>
+            <input type="range" id="foodCostPct" min="25" max="45" step="0.5" value="30" oninput="updateSlider(this, 'foodCostDisplay'); calculate();">
+          </div>
+          <div class="slider-group">
+            <label>Hourly Labor Cost % <span id="laborCostDisplay">25.0%</span></label>
+            <input type="range" id="laborCostPct" min="20" max="35" step="0.5" value="25" oninput="updateSlider(this, 'laborCostDisplay'); calculate();">
+          </div>
+          <div class="slider-group">
+            <label>Other Variable % <span id="otherVarDisplay">5.0%</span></label>
+            <input type="range" id="otherVarPct" min="0" max="15" step="0.5" value="5" oninput="updateSlider(this, 'otherVarDisplay'); calculate();">
+          </div>
+          <div class="fixed-costs-total">
+            <span>Total Variable Cost %</span>
+            <span id="totalVarPct">60.0%</span>
+          </div>
+        </div>
+
+        <!-- Revenue Inputs -->
+        <div class="panel">
+          <h2 class="panel-title">Revenue Inputs</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="avgCheck">Average Check / Ticket ($)</label>
+              <input type="number" id="avgCheck" min="0" step="0.01" placeholder="e.g. 28.00" oninput="calculate()">
+            </div>
+            <div class="form-group">
+              <label for="avgCovers">Average Covers per Day</label>
+              <input type="number" id="avgCovers" min="0" step="1" placeholder="e.g. 120" oninput="calculate()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="daysOpen">Days Open per Month</label>
+            <input type="number" id="daysOpen" min="1" max="31" step="1" value="26" oninput="calculate()">
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="panel">
+          <h2 class="panel-title">Break-Even Analysis</h2>
+          <div class="results-grid">
+            <div class="result-item">
+              <div class="result-label">Total Fixed Costs / Month</div>
+              <div class="result-value" id="resFixedCosts">$0.00</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Total Variable Cost %</div>
+              <div class="result-value" id="resVarPct">60.0%</div>
+            </div>
+            <div class="result-item highlight">
+              <div class="result-label">Contribution Margin / Cover</div>
+              <div class="result-value" id="resContribMargin">$0.00</div>
+            </div>
+            <div class="result-item highlight">
+              <div class="result-label">Break-Even Revenue / Month</div>
+              <div class="result-value" id="resBreakEvenRev">$0.00</div>
+            </div>
+            <div class="result-item highlight">
+              <div class="result-label">Break-Even Covers / Day</div>
+              <div class="result-value" id="resBreakEvenDay">0</div>
+            </div>
+            <div class="result-item highlight">
+              <div class="result-label">Break-Even Covers / Month</div>
+              <div class="result-value" id="resBreakEvenMonth">0</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Current Monthly Revenue</div>
+              <div class="result-value" id="resCurrentRev">$0.00</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Current Monthly Covers</div>
+              <div class="result-value" id="resCurrentCovers">0</div>
+            </div>
+          </div>
+          <div class="profit-indicator neutral" id="profitIndicator">
+            <span>Enter your numbers above to see your projection</span>
+            <span class="profit-amount" id="profitAmount"></span>
+          </div>
+        </div>
+
+        <!-- SEO Content -->
+        <section class="info-section">
+          <h2>How to Calculate Break-Even for a Restaurant</h2>
+          <p>The break-even point is the level of sales at which your total revenue exactly equals your total costs, meaning you are neither making a profit nor incurring a loss. For restaurants, this is most practically expressed as the number of covers (customers served) you need each day to cover all expenses.</p>
+          <p>The formula is straightforward: <strong>Break-Even Revenue = Fixed Costs / (1 - Total Variable Cost %)</strong>. Once you know the break-even revenue, divide by your average check to find the number of covers needed per month. Then divide by the number of days you are open to get your daily target.</p>
+          <p>The contribution margin per cover tells you how much each guest contributes toward paying off your fixed costs after variable expenses are covered. A higher average check or lower variable cost percentage increases your contribution margin, meaning you need fewer covers to break even.</p>
+
+          <h2>Understanding Fixed vs Variable Costs</h2>
+          <p><strong>Fixed costs</strong> remain the same regardless of how many guests you serve. These include rent or lease payments, insurance premiums, salaried manager and staff wages, loan payments, licenses, and basic marketing expenses. Even if you close for a day, these costs still accrue.</p>
+          <p><strong>Variable costs</strong> change in direct proportion to sales volume. In a restaurant, the three major variable costs are:</p>
+          <ul>
+            <li><strong>Food cost</strong> (typically 25-40% of revenue) &mdash; the cost of ingredients for every dish sold.</li>
+            <li><strong>Hourly labor cost</strong> (typically 20-35% of revenue) &mdash; wages for hourly staff like servers, line cooks, and dishwashers that flex with business volume.</li>
+            <li><strong>Other variable costs</strong> (typically 3-10%) &mdash; includes credit card processing fees, disposable supplies, delivery commissions, and linen service.</li>
+          </ul>
+          <p>Understanding the distinction is critical because your contribution margin (the percentage of each dollar of revenue that goes toward covering fixed costs) is determined entirely by your variable cost percentage. The lower your variable costs, the faster you reach break-even.</p>
+
+          <h2>What is a Good Break-Even Point?</h2>
+          <p>There is no universal answer since it depends on your concept, location, and capacity. However, a few general benchmarks can help you evaluate your situation:</p>
+          <ul>
+            <li><strong>Full-service restaurants</strong> typically aim to break even at 60-75% of their maximum seating capacity. If you can seat 150 guests per service, you want your break-even to be around 90-110 covers per day.</li>
+            <li><strong>Quick-service and fast-casual</strong> concepts often have lower average checks but higher volume, so break-even cover counts are higher, but total revenue thresholds may be similar.</li>
+            <li><strong>A healthy target</strong> is to break even within the first two to three weeks of each month, leaving the final week as pure profit (after variable costs).</li>
+            <li><strong>If your break-even exceeds 85% of realistic capacity</strong>, you have very little margin for error. Consider ways to lower fixed costs, reduce variable percentages, or increase your average check through menu engineering and upselling.</li>
+          </ul>
+          <p>Use this calculator regularly to model different scenarios, such as the impact of a rent increase, adding a staff member, or raising menu prices. Knowing your break-even point puts you in control of your restaurant's financial future.</p>
+        </section>
+
+      </div>
+
+      <div class="tool-sidebar">
+        <div class="ad-slot ad-slot-sidebar">Ad Space</div>
+        <div class="affiliate-cta">
+          <h3>Track Costs Automatically</h3>
+          <p>Sync your POS data with restaurant management software to monitor break-even in real time.</p>
+          <a href="#" class="btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127860;</span>
+          RestaurantCalc
+        </div>
+        <p>Free restaurant management tools for food service professionals. No signup, no fees, no data collection.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="recipe-cost.html">Recipe Cost Calculator</a>
+        <a href="menu-pricing.html">Menu Price Calculator</a>
+        <a href="tip-calculator.html">Tip Distribution</a>
+        <a href="kitchen-converter.html">Kitchen Converter</a>
+      </div>
+      <div class="footer-links">
+        <h4>More Tools</h4>
+        <a href="break-even.html">Break-Even Calculator</a>
+        <a href="par-level.html">Par Level Calculator</a>
+        <a href="catering-quote.html">Catering Quote Generator</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 RestaurantCalc. All tools are free to use. Not financial advice.
+    </div>
+  </footer>
+
+  <script src="../js/shared.js"></script>
+  <script>
+    // Default fixed cost categories
+    var defaultFixedCosts = [
+      { description: 'Rent/Lease', amount: 5000 },
+      { description: 'Insurance', amount: 800 },
+      { description: 'Salaried Labor', amount: 8000 },
+      { description: 'Utilities', amount: 1500 },
+      { description: 'Loan Payments', amount: 2000 },
+      { description: 'Licenses & Permits', amount: 200 },
+      { description: 'Marketing', amount: 500 },
+      { description: 'Other Fixed Costs', amount: 0 }
+    ];
+
+    var fixedCostRows = [];
+    var nextRowId = 0;
+
+    function addFixedCostRow(desc, amount) {
+      var id = nextRowId++;
+      var container = document.getElementById('fixedCostsContainer');
+      var row = document.createElement('div');
+      row.className = 'fixed-cost-row';
+      row.dataset.rowId = id;
+      row.innerHTML =
+        '<input type="text" placeholder="Description" value="' + escapeAttr(desc) + '" oninput="calculate()">' +
+        '<input type="number" placeholder="$ Amount" min="0" step="1" value="' + (amount !== '' ? amount : '') + '" oninput="calculate()">' +
+        '<button type="button" class="btn-remove" onclick="removeFixedCostRow(' + id + ')" title="Remove">&times;</button>';
+      container.appendChild(row);
+      fixedCostRows.push(id);
+      calculate();
+    }
+
+    function removeFixedCostRow(id) {
+      var row = document.querySelector('.fixed-cost-row[data-row-id="' + id + '"]');
+      if (row) row.remove();
+      fixedCostRows = fixedCostRows.filter(function(r) { return r !== id; });
+      calculate();
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function getFixedCostsTotal() {
+      var total = 0;
+      var rows = document.querySelectorAll('.fixed-cost-row');
+      rows.forEach(function(row) {
+        var amtInput = row.querySelector('input[type="number"]');
+        total += parseNum(amtInput.value);
+      });
+      return total;
+    }
+
+    function updateSlider(slider, displayId) {
+      document.getElementById(displayId).textContent = parseFloat(slider.value).toFixed(1) + '%';
+    }
+
+    function calculate() {
+      // Fixed costs
+      var totalFixed = getFixedCostsTotal();
+      document.getElementById('totalFixedCosts').textContent = formatCurrency(totalFixed);
+
+      // Variable costs
+      var foodPct = parseNum(document.getElementById('foodCostPct').value);
+      var laborPct = parseNum(document.getElementById('laborCostPct').value);
+      var otherPct = parseNum(document.getElementById('otherVarPct').value);
+      var totalVarPct = foodPct + laborPct + otherPct;
+      document.getElementById('totalVarPct').textContent = totalVarPct.toFixed(1) + '%';
+
+      // Revenue inputs
+      var avgCheck = parseNum(document.getElementById('avgCheck').value);
+      var avgCovers = parseNum(document.getElementById('avgCovers').value);
+      var daysOpen = parseNum(document.getElementById('daysOpen').value) || 26;
+
+      // Contribution margin per cover
+      var varFraction = totalVarPct / 100;
+      var contribMargin = avgCheck * (1 - varFraction);
+
+      // Break-even calculations
+      var breakEvenRev = 0;
+      var breakEvenCoversMonth = 0;
+      var breakEvenCoversDay = 0;
+
+      if (varFraction < 1 && totalFixed > 0) {
+        breakEvenRev = totalFixed / (1 - varFraction);
+      }
+
+      if (contribMargin > 0 && totalFixed > 0) {
+        breakEvenCoversMonth = Math.ceil(totalFixed / contribMargin);
+        breakEvenCoversDay = Math.ceil(breakEvenCoversMonth / daysOpen);
+      }
+
+      // Current projections
+      var currentMonthlyCovers = avgCovers * daysOpen;
+      var currentMonthlyRev = avgCheck * currentMonthlyCovers;
+      var totalVarCost = currentMonthlyRev * varFraction;
+      var profitLoss = currentMonthlyRev - totalVarCost - totalFixed;
+
+      // Update results display
+      document.getElementById('resFixedCosts').textContent = formatCurrency(totalFixed);
+      document.getElementById('resVarPct').textContent = totalVarPct.toFixed(1) + '%';
+      document.getElementById('resContribMargin').textContent = formatCurrency(contribMargin);
+      document.getElementById('resBreakEvenRev').textContent = formatCurrency(breakEvenRev);
+      document.getElementById('resBreakEvenDay').textContent = breakEvenCoversDay.toLocaleString();
+      document.getElementById('resBreakEvenMonth').textContent = breakEvenCoversMonth.toLocaleString();
+      document.getElementById('resCurrentRev').textContent = formatCurrency(currentMonthlyRev);
+      document.getElementById('resCurrentCovers').textContent = currentMonthlyCovers.toLocaleString();
+
+      // Profit/loss indicator
+      var indicator = document.getElementById('profitIndicator');
+      var profitAmountEl = document.getElementById('profitAmount');
+
+      if (avgCheck <= 0 || avgCovers <= 0 || totalFixed <= 0) {
+        indicator.className = 'profit-indicator neutral';
+        indicator.querySelector('span').textContent = 'Enter your numbers above to see your projection';
+        profitAmountEl.textContent = '';
+      } else if (profitLoss > 0) {
+        indicator.className = 'profit-indicator profitable';
+        indicator.querySelector('span').textContent = 'Projected Monthly Profit';
+        profitAmountEl.textContent = '+' + formatCurrency(profitLoss);
+      } else if (profitLoss < 0) {
+        indicator.className = 'profit-indicator loss';
+        indicator.querySelector('span').textContent = 'Projected Monthly Loss';
+        profitAmountEl.textContent = formatCurrency(profitLoss);
+      } else {
+        indicator.className = 'profit-indicator neutral';
+        indicator.querySelector('span').textContent = 'Exactly at Break-Even';
+        profitAmountEl.textContent = '$0.00';
+      }
+    }
+
+    // Initialize with default fixed cost rows
+    defaultFixedCosts.forEach(function(item) {
+      addFixedCostRow(item.description, item.amount);
+    });
+
+    // Run initial calculation
+    calculate();
+  </script>
+</body>
+</html>
