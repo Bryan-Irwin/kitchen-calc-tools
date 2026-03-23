@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Tip Distribution Calculator | Restaurant Tip Split Tool</title>
+  <meta name="description" content="Split tips fairly among restaurant staff. Calculate by hours worked, percentage, or equal split. Supports tip pooling with FOH/BOH splits.">
+  <meta name="keywords" content="tip calculator, tip split, tip distribution, restaurant tip pooling, FOH BOH tip split, tip out calculator, server tip calculator">
+  <link rel="canonical" href="https://restaurantcalc.com/tools/tip-calculator.html">
+  <meta property="og:title" content="Free Tip Distribution Calculator | Restaurant Tip Split Tool">
+  <meta property="og:description" content="Split tips fairly among restaurant staff. Calculate by hours worked, percentage, or equal split. Supports tip pooling with FOH/BOH splits.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://restaurantcalc.com/tools/tip-calculator.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tip Distribution Calculator",
+    "url": "https://restaurantcalc.com/tools/tip-calculator.html",
+    "description": "Split tips fairly among restaurant staff. Calculate by hours worked, percentage, or equal split. Supports tip pooling with FOH/BOH splits.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "RestaurantCalc",
+      "url": "https://restaurantcalc.com/"
+    }
+  }
+  </script>
+  <style>
+    .method-toggle {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .method-toggle button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: var(--bg-input);
+      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border-right: 1px solid var(--border);
+    }
+    .method-toggle button:last-child { border-right: none; }
+    .method-toggle button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .method-toggle button:hover:not(.active) {
+      background: var(--border);
+    }
+    .foh-boh-section {
+      background: var(--bg-input);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .foh-boh-section label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+      height: 6px;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    .slider-value {
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      min-width: 110px;
+      text-align: center;
+    }
+    .foh-tag, .boh-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .foh-tag { background: #e8f5e9; color: #2e7d32; }
+    .boh-tag { background: #e3f2fd; color: #1565c0; }
+    .staff-table input[type="text"],
+    .staff-table input[type="number"],
+    .staff-table select {
+      padding: 7px 10px;
+      font-size: 0.85rem;
+    }
+    .staff-table td { vertical-align: middle; }
+    .staff-table .tip-amount {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+    .btn-delete:hover { background: #fde8e8; }
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .validation-msg {
+      font-size: 0.8rem;
+      color: #e74c3c;
+      margin-top: 6px;
+      display: none;
+    }
+    .validation-msg.show { display: block; }
+    .match-ok { color: var(--accent); }
+    .match-warn { color: #e74c3c; }
+    .breakdown-list {
+      list-style: none;
+      padding: 0;
+    }
+    .breakdown-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .breakdown-list li:last-child { border-bottom: none; }
+    .breakdown-name { font-weight: 600; }
+    .breakdown-role { color: var(--text-muted); font-size: 0.8rem; margin-left: 6px; }
+    .breakdown-amount { font-weight: 700; color: var(--primary); }
+    .foh-boh-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .foh-boh-toggle-row label {
+      margin-bottom: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      display: inline-block;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--primary);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+    @media (max-width: 768px) {
+      .method-toggle {
+        flex-direction: column;
+      }
+      .method-toggle button {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .method-toggle button:last-child { border-bottom: none; }
+      .staff-table { font-size: 0.8rem; }
+      .staff-table input[type="text"],
+      .staff-table input[type="number"],
+      .staff-table select {
+        min-width: 80px;
+      }
+    }
+    @media print {
+      .method-toggle, .action-bar, .btn-delete, .foh-boh-section, .foh-boh-toggle-row { display: none; }
+      .panel { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">&#127860;</span>
+        RestaurantCalc
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+      <nav>
+        <a href="../">Home</a>
+        <a href="recipe-cost.html">Recipe Cost</a>
+        <a href="menu-pricing.html">Menu Pricing</a>
+        <a href="tip-calculator.html" class="active">Tips</a>
+        <a href="kitchen-converter.html">Converter</a>
+        <a href="break-even.html">Break-Even</a>
+        <a href="par-level.html">Par Level</a>
+        <a href="catering-quote.html">Catering</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="tool-layout">
+      <div class="tool-main">
+        <div class="breadcrumb">
+          <a href="../">Home</a> &raquo; Tip Distribution Calculator
+        </div>
+        <div class="tool-header">
+          <h1>Tip Distribution Calculator</h1>
+          <p>Split tips fairly among your restaurant staff by hours worked, custom percentages, or equal shares. Supports FOH/BOH pooling.</p>
+        </div>
+
+        <!-- Total Tips Input -->
+        <div class="panel">
+          <div class="panel-title">Total Tips</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="totalTips">Total Tips Amount ($)</label>
+              <input type="number" id="totalTips" min="0" step="0.01" placeholder="0.00" value="">
+            </div>
+          </div>
+
+          <!-- FOH/BOH Toggle -->
+          <div class="foh-boh-toggle-row">
+            <label class="toggle-switch">
+              <input type="checkbox" id="fohBohEnabled">
+              <span class="toggle-slider"></span>
+            </label>
+            <label for="fohBohEnabled" style="font-size:0.85rem;font-weight:600;">Enable FOH / BOH Split</label>
+          </div>
+          <div class="foh-boh-section hidden" id="fohBohSection">
+            <label>Front of House / Back of House Split</label>
+            <div class="slider-row">
+              <span style="font-size:0.8rem;font-weight:600;color:var(--accent);">FOH</span>
+              <input type="range" id="fohSlider" min="0" max="100" value="80">
+              <span style="font-size:0.8rem;font-weight:600;color:#1565c0;">BOH</span>
+            </div>
+            <div class="slider-value" id="fohBohDisplay">80% FOH / 20% BOH</div>
+            <div class="slider-labels">
+              <span>FOH Pool: <strong id="fohPoolAmount">$0.00</strong></span>
+              <span>BOH Pool: <strong id="bohPoolAmount">$0.00</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distribution Method -->
+        <div class="panel">
+          <div class="panel-title">Distribution Method</div>
+          <div class="method-toggle">
+            <button class="active" data-method="hours" onclick="setMethod('hours')">By Hours Worked</button>
+            <button data-method="percentage" onclick="setMethod('percentage')">By Custom Percentage</button>
+            <button data-method="equal" onclick="setMethod('equal')">Equal Split</button>
+          </div>
+
+          <!-- Staff Table -->
+          <div class="table-wrap">
+            <table class="staff-table" id="staffTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th id="variableColHeader">Hours Worked</th>
+                  <th>Tip Amount</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="staffBody">
+              </tbody>
+            </table>
+          </div>
+          <div class="validation-msg" id="percentMsg">Total percentage must equal 100%. Currently: <span id="percentTotal">0</span>%</div>
+          <div class="action-bar">
+            <button class="btn btn-primary" onclick="addStaffRow()">+ Add Staff Member</button>
+            <button class="btn btn-accent" onclick="calculateTips()">Calculate Tips</button>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="panel hidden" id="resultsPanel">
+          <div class="panel-title">Results</div>
+          <div class="result-box">
+            <h3>Tip Distribution Summary</h3>
+            <div class="result-stats">
+              <div class="stat">
+                <span class="stat-value" id="resultTotal">$0.00</span>
+                <span class="stat-label">Total Distributed</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="resultStaff">0</span>
+                <span class="stat-label">Staff Members</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="resultAvg">$0.00</span>
+                <span class="stat-label">Average Per Person</span>
+              </div>
+            </div>
+            <p class="mt-2" id="verifyMsg" style="font-size:0.85rem;text-align:center;"></p>
+          </div>
+          <h4 class="mb-2">Per-Person Breakdown</h4>
+          <ul class="breakdown-list" id="breakdownList"></ul>
+          <div class="action-bar mt-2">
+            <button class="btn btn-secondary" onclick="printResults()">&#128424; Print / Export</button>
+          </div>
+        </div>
+
+        <!-- SEO Content -->
+        <section class="info-section">
+          <h2>How to Split Tips Fairly</h2>
+          <p>Fair tip distribution is one of the biggest challenges restaurant managers face every shift. The right approach depends on your team structure, local laws, and the culture of your establishment. Here are the most common methods:</p>
+          <ul>
+            <li><strong>By hours worked</strong> &mdash; The most common and generally considered the fairest method. Staff who work more hours receive a proportionally larger share of the tip pool. This accounts for different shift lengths and part-time employees.</li>
+            <li><strong>By custom percentage</strong> &mdash; Assign specific percentages to each role or individual. This is useful when certain roles (like servers) have more direct guest interaction and traditionally receive a larger share.</li>
+            <li><strong>Equal split</strong> &mdash; Every team member receives the same amount regardless of role or hours. This works best for small teams where everyone contributes equally to the guest experience.</li>
+          </ul>
+          <p>Whichever method you choose, transparency is critical. Post your tip distribution policy clearly and make sure every team member understands how their share is calculated before they start their first shift.</p>
+
+          <h2 class="mt-3">Tip Pooling Laws: What You Need to Know</h2>
+          <p>Tip pooling regulations vary significantly by jurisdiction. In the United States, the Fair Labor Standards Act (FLSA) sets federal rules, but state and local laws may be stricter. Here are key points every restaurant operator should understand:</p>
+          <ul>
+            <li><strong>Tip ownership</strong> &mdash; Tips are the property of the employee. Employers cannot take any portion of tips under the FLSA, except to facilitate a valid tip pool.</li>
+            <li><strong>Tip pool participants</strong> &mdash; Under current federal law, if an employer does not take a tip credit, back-of-house employees (cooks, dishwashers) may be included in the tip pool. If the employer takes a tip credit, only customarily tipped employees may participate.</li>
+            <li><strong>Managers and supervisors</strong> &mdash; Managers and supervisors are generally prohibited from participating in tip pools under federal law, even if they perform tipped duties.</li>
+            <li><strong>State variations</strong> &mdash; States like California, Oregon, and Washington prohibit tip credits entirely and have their own pooling rules. Always check your state and local regulations.</li>
+            <li><strong>Record-keeping</strong> &mdash; Maintain detailed records of all tip distributions. This calculator can help you create consistent, auditable records for every shift.</li>
+          </ul>
+          <p>This tool is not legal advice. Consult with an employment attorney or your state labor department to ensure your tip distribution policy complies with all applicable laws.</p>
+
+          <h2 class="mt-3">Front of House vs Back of House Tip Splits</h2>
+          <p>The FOH/BOH tip split is one of the most debated topics in the restaurant industry. Front-of-house staff (servers, bartenders, hosts) interact directly with guests and traditionally receive the majority of tips. Back-of-house staff (cooks, prep cooks, dishwashers) work behind the scenes but are essential to the guest experience.</p>
+          <p>Common FOH/BOH split ratios include:</p>
+          <ul>
+            <li><strong>80/20</strong> &mdash; The most traditional split. FOH receives 80% of the pool, BOH receives 20%. This is a good starting point for restaurants transitioning to tip sharing.</li>
+            <li><strong>70/30</strong> &mdash; Increasingly popular as the industry recognizes the value of kitchen staff. Provides a more meaningful share to BOH while still rewarding front-of-house service.</li>
+            <li><strong>60/40</strong> &mdash; Used by restaurants that emphasize the kitchen's contribution to the dining experience, especially in chef-driven establishments.</li>
+          </ul>
+          <p>Use the FOH/BOH slider above to experiment with different ratios and see how they affect individual payouts. The right ratio for your restaurant depends on your team's compensation structure, local labor market, and the value each group brings to your operation.</p>
+        </section>
+      </div>
+
+      <div class="tool-sidebar">
+        <div class="ad-slot ad-slot-sidebar">Ad Space</div>
+        <div class="affiliate-cta">
+          <h3>Simplify Payroll</h3>
+          <p>Automate tip tracking, payroll, and compliance with restaurant-grade software.</p>
+          <a href="#" class="btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127860;</span>
+          RestaurantCalc
+        </div>
+        <p>Free restaurant management tools for food service professionals. No signup, no fees, no data collection.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="recipe-cost.html">Recipe Cost Calculator</a>
+        <a href="menu-pricing.html">Menu Price Calculator</a>
+        <a href="tip-calculator.html">Tip Distribution</a>
+        <a href="kitchen-converter.html">Kitchen Converter</a>
+      </div>
+      <div class="footer-links">
+        <h4>More Tools</h4>
+        <a href="break-even.html">Break-Even Calculator</a>
+        <a href="par-level.html">Par Level Calculator</a>
+        <a href="catering-quote.html">Catering Quote Generator</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 RestaurantCalc. All tools are free to use. Not financial advice.
+    </div>
+  </footer>
+
+  <script src="../js/shared.js"></script>
+  <script>
+    /* ===== State ===== */
+    var currentMethod = 'hours';
+    var staffIdCounter = 0;
+
+    var FOH_ROLES = ['Server', 'Bartender', 'Host', 'Runner'];
+    var BOH_ROLES = ['Busser', 'Kitchen', 'Manager', 'Other'];
+
+    function isFOH(role) {
+      return FOH_ROLES.indexOf(role) !== -1;
+    }
+
+    /* ===== Distribution Method Toggle ===== */
+    function setMethod(method) {
+      currentMethod = method;
+      var btns = document.querySelectorAll('.method-toggle button');
+      btns.forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-method') === method);
+      });
+
+      var header = document.getElementById('variableColHeader');
+      if (method === 'hours') {
+        header.textContent = 'Hours Worked';
+      } else if (method === 'percentage') {
+        header.textContent = '% Share';
+      } else {
+        header.textContent = '--';
+      }
+
+      // Update input visibility and placeholders
+      var rows = document.querySelectorAll('#staffBody tr');
+      rows.forEach(function(row) {
+        var input = row.querySelector('.variable-input');
+        if (method === 'hours') {
+          input.style.display = '';
+          input.placeholder = '0';
+          input.step = '0.25';
+        } else if (method === 'percentage') {
+          input.style.display = '';
+          input.placeholder = '0';
+          input.step = '0.1';
+        } else {
+          input.style.display = 'none';
+        }
+      });
+
+      updatePercentValidation();
+      calculateTips();
+    }
+
+    /* ===== FOH/BOH Toggle ===== */
+    var fohBohCheckbox = document.getElementById('fohBohEnabled');
+    var fohBohSection = document.getElementById('fohBohSection');
+    var fohSlider = document.getElementById('fohSlider');
+
+    fohBohCheckbox.addEventListener('change', function() {
+      fohBohSection.classList.toggle('hidden', !this.checked);
+      updateFohBohDisplay();
+      calculateTips();
+    });
+
+    fohSlider.addEventListener('input', function() {
+      updateFohBohDisplay();
+      calculateTips();
+    });
+
+    function updateFohBohDisplay() {
+      var fohPct = parseInt(fohSlider.value);
+      var bohPct = 100 - fohPct;
+      document.getElementById('fohBohDisplay').textContent = fohPct + '% FOH / ' + bohPct + '% BOH';
+
+      var total = parseNum(document.getElementById('totalTips').value);
+      document.getElementById('fohPoolAmount').textContent = formatCurrency(total * fohPct / 100);
+      document.getElementById('bohPoolAmount').textContent = formatCurrency(total * bohPct / 100);
+    }
+
+    document.getElementById('totalTips').addEventListener('input', function() {
+      updateFohBohDisplay();
+      calculateTips();
+    });
+
+    /* ===== Staff Table ===== */
+    function addStaffRow(name, role, value) {
+      staffIdCounter++;
+      var id = 'staff_' + staffIdCounter;
+      var tbody = document.getElementById('staffBody');
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-id', id);
+
+      var nameVal = name || '';
+      var roleVal = role || 'Server';
+      var varVal = value || '';
+      var hidden = currentMethod === 'equal' ? 'display:none;' : '';
+
+      tr.innerHTML =
+        '<td><input type="text" class="staff-name" value="' + nameVal + '" placeholder="Staff name"></td>' +
+        '<td><select class="staff-role">' +
+          '<option value="Server"' + (roleVal === 'Server' ? ' selected' : '') + '>Server</option>' +
+          '<option value="Bartender"' + (roleVal === 'Bartender' ? ' selected' : '') + '>Bartender</option>' +
+          '<option value="Host"' + (roleVal === 'Host' ? ' selected' : '') + '>Host</option>' +
+          '<option value="Busser"' + (roleVal === 'Busser' ? ' selected' : '') + '>Busser</option>' +
+          '<option value="Runner"' + (roleVal === 'Runner' ? ' selected' : '') + '>Runner</option>' +
+          '<option value="Kitchen"' + (roleVal === 'Kitchen' ? ' selected' : '') + '>Kitchen</option>' +
+          '<option value="Manager"' + (roleVal === 'Manager' ? ' selected' : '') + '>Manager</option>' +
+          '<option value="Other"' + (roleVal === 'Other' ? ' selected' : '') + '>Other</option>' +
+        '</select></td>' +
+        '<td><input type="number" class="variable-input" min="0" step="0.25" placeholder="0" value="' + varVal + '" style="' + hidden + '"></td>' +
+        '<td class="tip-amount">$0.00</td>' +
+        '<td><button class="btn-delete" onclick="deleteRow(this)" title="Remove">&times;</button></td>';
+
+      tbody.appendChild(tr);
+
+      // Bind events for live recalculation
+      var varInput = tr.querySelector('.variable-input');
+      varInput.addEventListener('input', function() {
+        updatePercentValidation();
+        calculateTips();
+      });
+      tr.querySelector('.staff-role').addEventListener('change', function() {
+        calculateTips();
+      });
+
+      updatePercentValidation();
+      calculateTips();
+    }
+
+    function deleteRow(btn) {
+      var row = btn.closest('tr');
+      row.remove();
+      updatePercentValidation();
+      calculateTips();
+    }
+
+    /* ===== Percentage Validation ===== */
+    function updatePercentValidation() {
+      var msg = document.getElementById('percentMsg');
+      if (currentMethod !== 'percentage') {
+        msg.classList.remove('show');
+        return;
+      }
+      var total = 0;
+      document.querySelectorAll('#staffBody .variable-input').forEach(function(input) {
+        total += parseNum(input.value);
+      });
+      document.getElementById('percentTotal').textContent = total.toFixed(1);
+      if (total > 0 && Math.abs(total - 100) > 0.1) {
+        msg.classList.add('show');
+        msg.style.color = '#e74c3c';
+      } else if (Math.abs(total - 100) <= 0.1) {
+        msg.classList.add('show');
+        msg.style.color = 'var(--accent)';
+        document.getElementById('percentTotal').textContent = '100.0';
+      } else {
+        msg.classList.remove('show');
+      }
+    }
+
+    /* ===== Calculate Tips ===== */
+    function calculateTips() {
+      var totalTips = parseNum(document.getElementById('totalTips').value);
+      var rows = document.querySelectorAll('#staffBody tr');
+      if (rows.length === 0 || totalTips <= 0) {
+        document.getElementById('resultsPanel').classList.add('hidden');
+        // Reset displayed amounts
+        rows.forEach(function(row) {
+          row.querySelector('.tip-amount').textContent = '$0.00';
+        });
+        return;
+      }
+
+      var fohBohEnabled = fohBohCheckbox.checked;
+      var fohPct = parseInt(fohSlider.value) / 100;
+      var bohPct = 1 - fohPct;
+
+      // Gather staff data
+      var staff = [];
+      rows.forEach(function(row) {
+        var name = row.querySelector('.staff-name').value || 'Unnamed';
+        var role = row.querySelector('.staff-role').value;
+        var varValue = parseNum(row.querySelector('.variable-input').value);
+        staff.push({
+          name: name,
+          role: role,
+          value: varValue,
+          isFOH: isFOH(role),
+          element: row
+        });
+      });
+
+      // Calculate individual tips
+      var tipAmounts = [];
+
+      if (fohBohEnabled) {
+        var fohPool = totalTips * fohPct;
+        var bohPool = totalTips * bohPct;
+        var fohStaff = staff.filter(function(s) { return s.isFOH; });
+        var bohStaff = staff.filter(function(s) { return !s.isFOH; });
+
+        tipAmounts = distributePool(fohStaff, fohPool, currentMethod)
+          .concat(distributePool(bohStaff, bohPool, currentMethod));
+      } else {
+        tipAmounts = distributePool(staff, totalTips, currentMethod);
+      }
+
+      // Update table and build breakdown
+      var distributed = 0;
+      var breakdownHTML = '';
+      tipAmounts.forEach(function(item) {
+        item.element.querySelector('.tip-amount').textContent = formatCurrency(item.tip);
+        distributed += item.tip;
+        var tag = fohBohEnabled ? (item.isFOH ? '<span class="foh-tag">FOH</span>' : '<span class="boh-tag">BOH</span>') : '';
+        breakdownHTML += '<li><span><span class="breakdown-name">' + escapeHTML(item.name) + '</span><span class="breakdown-role">' + item.role + tag + '</span></span><span class="breakdown-amount">' + formatCurrency(item.tip) + '</span></li>';
+      });
+
+      // Show results
+      var resultsPanel = document.getElementById('resultsPanel');
+      resultsPanel.classList.remove('hidden');
+      document.getElementById('resultTotal').textContent = formatCurrency(distributed);
+      document.getElementById('resultStaff').textContent = tipAmounts.length;
+      document.getElementById('resultAvg').textContent = tipAmounts.length > 0 ? formatCurrency(distributed / tipAmounts.length) : '$0.00';
+      document.getElementById('breakdownList').innerHTML = breakdownHTML;
+
+      // Verify total
+      var diff = Math.abs(totalTips - distributed);
+      var verifyEl = document.getElementById('verifyMsg');
+      if (diff < 0.02) {
+        verifyEl.className = 'mt-2 match-ok';
+        verifyEl.textContent = 'Total distributed matches input amount.';
+        verifyEl.style.fontSize = '0.85rem';
+        verifyEl.style.textAlign = 'center';
+      } else {
+        verifyEl.className = 'mt-2 match-warn';
+        verifyEl.textContent = 'Rounding difference: ' + formatCurrency(diff) + '. Distributed ' + formatCurrency(distributed) + ' of ' + formatCurrency(totalTips) + '.';
+        verifyEl.style.fontSize = '0.85rem';
+        verifyEl.style.textAlign = 'center';
+      }
+    }
+
+    function distributePool(staffList, pool, method) {
+      var results = [];
+      if (staffList.length === 0) return results;
+
+      if (method === 'equal') {
+        var share = pool / staffList.length;
+        // Round to cents, handle remainder
+        var rounded = Math.floor(share * 100) / 100;
+        var remainder = Math.round((pool - rounded * staffList.length) * 100);
+        staffList.forEach(function(s, i) {
+          var tip = rounded + (i < remainder ? 0.01 : 0);
+          results.push({ name: s.name, role: s.role, tip: tip, isFOH: s.isFOH, element: s.element });
+        });
+      } else if (method === 'hours') {
+        var totalHours = 0;
+        staffList.forEach(function(s) { totalHours += s.value; });
+        if (totalHours === 0) {
+          staffList.forEach(function(s) {
+            results.push({ name: s.name, role: s.role, tip: 0, isFOH: s.isFOH, element: s.element });
+          });
+        } else {
+          var distributed = 0;
+          staffList.forEach(function(s, i) {
+            var tip;
+            if (i === staffList.length - 1) {
+              tip = Math.round((pool - distributed) * 100) / 100;
+            } else {
+              tip = Math.round((s.value / totalHours) * pool * 100) / 100;
+            }
+            distributed += tip;
+            results.push({ name: s.name, role: s.role, tip: tip, isFOH: s.isFOH, element: s.element });
+          });
+        }
+      } else if (method === 'percentage') {
+        var totalPct = 0;
+        staffList.forEach(function(s) { totalPct += s.value; });
+        if (totalPct === 0) {
+          staffList.forEach(function(s) {
+            results.push({ name: s.name, role: s.role, tip: 0, isFOH: s.isFOH, element: s.element });
+          });
+        } else {
+          var distributed = 0;
+          staffList.forEach(function(s, i) {
+            var tip;
+            if (i === staffList.length - 1) {
+              tip = Math.round((pool - distributed) * 100) / 100;
+            } else {
+              tip = Math.round((s.value / totalPct) * pool * 100) / 100;
+            }
+            distributed += tip;
+            results.push({ name: s.name, role: s.role, tip: tip, isFOH: s.isFOH, element: s.element });
+          });
+        }
+      }
+      return results;
+    }
+
+    /* ===== Print ===== */
+    function printResults() {
+      window.print();
+    }
+
+    /* ===== Utilities ===== */
+    function escapeHTML(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /* ===== Initialize with default rows ===== */
+    addStaffRow('', 'Server', '');
+    addStaffRow('', 'Bartender', '');
+    addStaffRow('', 'Busser', '');
+  </script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Recipe Cost Calculator for Restaurants | RestaurantCalc</title>
+  <meta name="description" content="Calculate the true cost of any recipe. Add ingredients, set portions, factor in waste, and see your cost per serving. Free, no signup required.">
+  <meta name="keywords" content="recipe cost calculator, food cost calculator, restaurant recipe costing, cost per serving, food cost percentage, ingredient cost calculator">
+  <link rel="canonical" href="https://restaurantcalc.com/tools/recipe-cost.html">
+  <meta property="og:title" content="Free Recipe Cost Calculator for Restaurants | RestaurantCalc">
+  <meta property="og:description" content="Calculate the true cost of any recipe. Add ingredients, set portions, factor in waste, and see your cost per serving. Free, no signup required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://restaurantcalc.com/tools/recipe-cost.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Recipe Cost Calculator",
+    "url": "https://restaurantcalc.com/tools/recipe-cost.html",
+    "description": "Calculate the true cost of any recipe. Add ingredients, set portions, factor in waste, and see your cost per serving.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "RestaurantCalc",
+      "url": "https://restaurantcalc.com/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">&#127860;</span>
+        RestaurantCalc
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+      <nav>
+        <a href="../">Home</a>
+        <a href="recipe-cost.html" class="active">Recipe Cost</a>
+        <a href="menu-pricing.html">Menu Pricing</a>
+        <a href="tip-calculator.html">Tips</a>
+        <a href="kitchen-converter.html">Converter</a>
+        <a href="break-even.html">Break-Even</a>
+        <a href="par-level.html">Par Level</a>
+        <a href="catering-quote.html">Catering</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">
+      <a href="../">Home</a> &rsaquo; Recipe Cost Calculator
+    </div>
+
+    <div class="tool-header">
+      <h1>Recipe Cost Calculator</h1>
+      <p>Add ingredients with quantities and prices to calculate the true cost per recipe and per serving. Factor in waste to get accurate numbers.</p>
+    </div>
+
+    <div class="tool-layout">
+      <div class="tool-main">
+
+        <!-- Recipe Details Panel -->
+        <div class="panel">
+          <div class="panel-title">Recipe Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="recipe-name">Recipe Name</label>
+              <input type="text" id="recipe-name" placeholder="e.g., Classic Caesar Salad">
+            </div>
+            <div class="form-group">
+              <label for="servings">Number of Servings</label>
+              <input type="number" id="servings" value="4" min="1" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ingredients Panel -->
+        <div class="panel">
+          <div class="panel-title">Ingredients</div>
+          <div class="table-wrap">
+            <table id="ingredients-table">
+              <thead>
+                <tr>
+                  <th>Ingredient</th>
+                  <th>Qty</th>
+                  <th>Unit</th>
+                  <th>Cost/Unit ($)</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ingredients-body">
+              </tbody>
+            </table>
+          </div>
+          <div class="btn-group mt-2">
+            <button class="btn btn-primary" id="add-ingredient-btn">+ Add Ingredient</button>
+          </div>
+        </div>
+
+        <!-- Waste Factor Panel -->
+        <div class="panel">
+          <div class="panel-title">Waste Factor</div>
+          <div class="form-group">
+            <label for="waste-slider">Waste Percentage: <strong id="waste-value">10%</strong></label>
+            <input type="range" id="waste-slider" min="0" max="30" value="10" style="width:100%;accent-color:var(--primary);margin-top:6px;">
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
+              <span>0%</span>
+              <span>15%</span>
+              <span>30%</span>
+            </div>
+          </div>
+          <p class="text-muted" style="font-size:0.85rem;margin-top:8px;">Accounts for trim, spoilage, and preparation loss. Industry average is 5&ndash;15%.</p>
+        </div>
+
+        <!-- Results -->
+        <div class="result-box" id="results-section">
+          <h3>Recipe Cost Summary</h3>
+          <div class="result-stats">
+            <div class="stat">
+              <span class="stat-value" id="total-cost">$0.00</span>
+              <span class="stat-label">Total Recipe Cost</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="cost-per-serving">$0.00</span>
+              <span class="stat-label">Cost Per Serving</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="ingredient-count">0</span>
+              <span class="stat-label">Ingredients</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="panel">
+          <div class="panel-title">Save &amp; Export</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="load-recipe">Load Saved Recipe</label>
+              <select id="load-recipe">
+                <option value="">-- Select a recipe --</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-group mt-2">
+            <button class="btn btn-accent" id="save-btn">Save Recipe</button>
+            <button class="btn btn-secondary" id="export-btn">Export as PDF</button>
+            <button class="btn btn-danger" id="clear-btn">Clear All</button>
+          </div>
+        </div>
+
+        <!-- SEO Info Section -->
+        <section class="info-section">
+          <h2>How to Calculate Recipe Cost</h2>
+          <p>Recipe costing is the process of determining the total cost of preparing a dish by adding up the cost of every individual ingredient. The formula is straightforward:</p>
+          <p><strong>Total Recipe Cost = Sum of (Ingredient Quantity &times; Cost Per Unit) &times; (1 + Waste Factor)</strong></p>
+          <p>Once you have the total recipe cost, divide it by the number of servings to find your <strong>cost per serving</strong>. This number is the foundation for setting menu prices, calculating food cost percentages, and making sure every dish contributes to your bottom line.</p>
+          <p>Knowing your true recipe cost matters because even small errors in estimating ingredient prices can add up to thousands of dollars in lost profit over a year. By calculating costs precisely, restaurant owners can identify which dishes are the most and least profitable, negotiate better pricing with suppliers, and make data-driven decisions about their menu.</p>
+
+          <h2 class="mt-3">What is a Good Food Cost Percentage?</h2>
+          <p>Food cost percentage is calculated as: <strong>(Cost of Ingredients &divide; Menu Price) &times; 100</strong>. The industry-standard benchmark for most full-service restaurants is <strong>28&ndash;35%</strong>. This means that for every dollar a customer pays, 28 to 35 cents goes toward the cost of the food.</p>
+          <p>However, the ideal percentage varies by type of establishment. Fine dining restaurants often target 30&ndash;35% because of premium ingredients, while fast-casual concepts may aim for 25&ndash;30% due to higher volume. Pizza shops and bakeries may run as low as 20&ndash;25% because of the low cost of flour and dough-based products.</p>
+          <p>If your food cost percentage is consistently above 35%, it is a sign that you should review portion sizes, renegotiate supplier contracts, or adjust menu pricing. Use this calculator alongside our <a href="menu-pricing.html">Menu Price Calculator</a> to dial in your numbers.</p>
+
+          <h2 class="mt-3">Tips for Reducing Food Costs</h2>
+          <ul>
+            <li><strong>Track waste daily.</strong> Use a waste log to identify patterns and reduce spoilage before it cuts into margins.</li>
+            <li><strong>Standardize recipes.</strong> Written recipes with exact measurements ensure consistency and prevent over-portioning.</li>
+            <li><strong>Cross-utilize ingredients.</strong> Design your menu so that the same ingredients appear in multiple dishes, reducing the number of specialty items you need to stock.</li>
+            <li><strong>Shop seasonally.</strong> Seasonal produce is cheaper and tastes better. Adjust your specials to take advantage of market prices.</li>
+            <li><strong>Negotiate with suppliers.</strong> Get quotes from multiple vendors and revisit contracts quarterly. Even small per-unit savings add up at volume.</li>
+            <li><strong>Do regular inventory counts.</strong> Weekly counts catch discrepancies early and keep your actual food costs aligned with theoretical costs.</li>
+            <li><strong>Use FIFO (First In, First Out).</strong> Rotate your stock so older products get used first, reducing expiration-related waste.</li>
+            <li><strong>Review your menu regularly.</strong> Drop underperforming dishes and promote high-margin items to improve your overall food cost mix.</li>
+          </ul>
+        </section>
+
+      </div>
+
+      <div class="tool-sidebar">
+        <div class="ad-slot ad-slot-sidebar">Ad Space</div>
+        <div class="affiliate-cta">
+          <h3>Need Inventory Software?</h3>
+          <p>Pair RestaurantCalc with professional inventory management to track food costs in real time.</p>
+          <a href="#" class="btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127860;</span>
+          RestaurantCalc
+        </div>
+        <p>Free restaurant management tools for food service professionals. No signup, no fees, no data collection.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Tools</h4>
+        <a href="recipe-cost.html">Recipe Cost Calculator</a>
+        <a href="menu-pricing.html">Menu Price Calculator</a>
+        <a href="tip-calculator.html">Tip Distribution</a>
+        <a href="kitchen-converter.html">Kitchen Converter</a>
+      </div>
+      <div class="footer-links">
+        <h4>More Tools</h4>
+        <a href="break-even.html">Break-Even Calculator</a>
+        <a href="par-level.html">Par Level Calculator</a>
+        <a href="catering-quote.html">Catering Quote Generator</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 RestaurantCalc. All tools are free to use. Not financial advice.
+    </div>
+  </footer>
+
+  <script src="../js/shared.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    var UNITS = ['oz', 'lb', 'g', 'kg', 'cups', 'tbsp', 'tsp', 'each', 'mL', 'L', 'gallon'];
+    var STORAGE_KEY = 'recipes';
+
+    var ingredientsBody = document.getElementById('ingredients-body');
+    var addBtn = document.getElementById('add-ingredient-btn');
+    var saveBtn = document.getElementById('save-btn');
+    var clearBtn = document.getElementById('clear-btn');
+    var exportBtn = document.getElementById('export-btn');
+    var loadSelect = document.getElementById('load-recipe');
+    var wasteSlider = document.getElementById('waste-slider');
+    var wasteValue = document.getElementById('waste-value');
+    var recipeNameInput = document.getElementById('recipe-name');
+    var servingsInput = document.getElementById('servings');
+    var totalCostEl = document.getElementById('total-cost');
+    var costPerServingEl = document.getElementById('cost-per-serving');
+    var ingredientCountEl = document.getElementById('ingredient-count');
+
+    var ingredientId = 0;
+
+    function createUnitSelect() {
+      var sel = document.createElement('select');
+      for (var i = 0; i < UNITS.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = UNITS[i];
+        opt.textContent = UNITS[i];
+        sel.appendChild(opt);
+      }
+      return sel;
+    }
+
+    function addIngredientRow(data) {
+      data = data || {};
+      ingredientId++;
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-id', ingredientId);
+
+      // Name
+      var tdName = document.createElement('td');
+      var nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.placeholder = 'Ingredient name';
+      nameInput.value = data.name || '';
+      nameInput.style.minWidth = '120px';
+      nameInput.className = 'ing-name';
+      tdName.appendChild(nameInput);
+
+      // Quantity
+      var tdQty = document.createElement('td');
+      var qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.placeholder = '0';
+      qtyInput.value = data.qty !== undefined ? data.qty : '';
+      qtyInput.min = '0';
+      qtyInput.step = 'any';
+      qtyInput.style.width = '80px';
+      qtyInput.className = 'ing-qty';
+      tdQty.appendChild(qtyInput);
+
+      // Unit
+      var tdUnit = document.createElement('td');
+      var unitSel = createUnitSelect();
+      unitSel.className = 'ing-unit';
+      if (data.unit) unitSel.value = data.unit;
+      tdUnit.appendChild(unitSel);
+
+      // Cost per unit
+      var tdCost = document.createElement('td');
+      var costInput = document.createElement('input');
+      costInput.type = 'number';
+      costInput.placeholder = '0.00';
+      costInput.value = data.costPerUnit !== undefined ? data.costPerUnit : '';
+      costInput.min = '0';
+      costInput.step = 'any';
+      costInput.style.width = '90px';
+      costInput.className = 'ing-cost';
+      tdCost.appendChild(costInput);
+
+      // Total
+      var tdTotal = document.createElement('td');
+      var totalSpan = document.createElement('strong');
+      totalSpan.className = 'ing-total';
+      totalSpan.textContent = '$0.00';
+      tdTotal.appendChild(totalSpan);
+
+      // Delete
+      var tdDel = document.createElement('td');
+      var delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-danger btn-sm';
+      delBtn.textContent = 'X';
+      delBtn.type = 'button';
+      delBtn.addEventListener('click', function() {
+        tr.remove();
+        recalculate();
+      });
+      tdDel.appendChild(delBtn);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdQty);
+      tr.appendChild(tdUnit);
+      tr.appendChild(tdCost);
+      tr.appendChild(tdTotal);
+      tr.appendChild(tdDel);
+
+      // Live recalculation
+      qtyInput.addEventListener('input', recalculate);
+      costInput.addEventListener('input', recalculate);
+
+      ingredientsBody.appendChild(tr);
+      recalculate();
+      return tr;
+    }
+
+    function recalculate() {
+      var rows = ingredientsBody.querySelectorAll('tr');
+      var subtotal = 0;
+      var count = 0;
+
+      for (var i = 0; i < rows.length; i++) {
+        var qty = parseNum(rows[i].querySelector('.ing-qty').value);
+        var cost = parseNum(rows[i].querySelector('.ing-cost').value);
+        var lineTotal = qty * cost;
+        rows[i].querySelector('.ing-total').textContent = formatCurrency(lineTotal);
+        subtotal += lineTotal;
+        count++;
+      }
+
+      var wastePct = parseNum(wasteSlider.value);
+      var totalWithWaste = subtotal * (1 + wastePct / 100);
+      var servings = parseNum(servingsInput.value);
+      if (servings < 1) servings = 1;
+      var perServing = totalWithWaste / servings;
+
+      totalCostEl.textContent = formatCurrency(totalWithWaste);
+      costPerServingEl.textContent = formatCurrency(perServing);
+      ingredientCountEl.textContent = count;
+    }
+
+    function getRecipeData() {
+      var rows = ingredientsBody.querySelectorAll('tr');
+      var ingredients = [];
+      for (var i = 0; i < rows.length; i++) {
+        ingredients.push({
+          name: rows[i].querySelector('.ing-name').value,
+          qty: rows[i].querySelector('.ing-qty').value,
+          unit: rows[i].querySelector('.ing-unit').value,
+          costPerUnit: rows[i].querySelector('.ing-cost').value
+        });
+      }
+      return {
+        id: generateId(),
+        name: recipeNameInput.value,
+        servings: servingsInput.value,
+        waste: wasteSlider.value,
+        ingredients: ingredients,
+        savedAt: new Date().toISOString()
+      };
+    }
+
+    function loadRecipeData(recipe) {
+      recipeNameInput.value = recipe.name || '';
+      servingsInput.value = recipe.servings || 4;
+      wasteSlider.value = recipe.waste || 10;
+      wasteValue.textContent = (recipe.waste || 10) + '%';
+      ingredientsBody.innerHTML = '';
+      if (recipe.ingredients && recipe.ingredients.length) {
+        for (var i = 0; i < recipe.ingredients.length; i++) {
+          addIngredientRow(recipe.ingredients[i]);
+        }
+      }
+      recalculate();
+    }
+
+    function clearAll() {
+      recipeNameInput.value = '';
+      servingsInput.value = 4;
+      wasteSlider.value = 10;
+      wasteValue.textContent = '10%';
+      ingredientsBody.innerHTML = '';
+      recalculate();
+    }
+
+    function populateLoadDropdown() {
+      var recipes = loadData(STORAGE_KEY) || [];
+      // Clear options except first
+      while (loadSelect.options.length > 1) {
+        loadSelect.remove(1);
+      }
+      for (var i = 0; i < recipes.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = recipes[i].name || 'Unnamed Recipe';
+        loadSelect.appendChild(opt);
+      }
+    }
+
+    // Event listeners
+    addBtn.addEventListener('click', function() {
+      addIngredientRow();
+    });
+
+    wasteSlider.addEventListener('input', function() {
+      wasteValue.textContent = this.value + '%';
+      recalculate();
+    });
+
+    servingsInput.addEventListener('input', recalculate);
+
+    saveBtn.addEventListener('click', function() {
+      var name = recipeNameInput.value.trim();
+      if (!name) {
+        showToast('Please enter a recipe name before saving.', 'error');
+        recipeNameInput.focus();
+        return;
+      }
+      var recipes = loadData(STORAGE_KEY) || [];
+      var data = getRecipeData();
+
+      // Check if recipe with same name exists and overwrite
+      var found = false;
+      for (var i = 0; i < recipes.length; i++) {
+        if (recipes[i].name === name) {
+          data.id = recipes[i].id;
+          recipes[i] = data;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        recipes.push(data);
+      }
+
+      if (saveData(STORAGE_KEY, recipes)) {
+        showToast('Recipe "' + name + '" saved!', 'success');
+        populateLoadDropdown();
+      } else {
+        showToast('Failed to save. Check browser storage.', 'error');
+      }
+    });
+
+    loadSelect.addEventListener('change', function() {
+      var idx = this.value;
+      if (idx === '') return;
+      var recipes = loadData(STORAGE_KEY) || [];
+      if (recipes[idx]) {
+        loadRecipeData(recipes[idx]);
+        showToast('Loaded "' + (recipes[idx].name || 'recipe') + '"', 'success');
+      }
+      this.value = '';
+    });
+
+    clearBtn.addEventListener('click', function() {
+      if (confirm('Clear all ingredients and reset the form?')) {
+        clearAll();
+        showToast('Form cleared.', 'success');
+      }
+    });
+
+    exportBtn.addEventListener('click', function() {
+      window.print();
+    });
+
+    // Initialize
+    populateLoadDropdown();
+    // Start with one empty row
+    addIngredientRow();
+  })();
+  </script>
+</body>
+</html>
